@@ -1,10 +1,12 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <vector>
+#include <stdio.h>
 
 using namespace cv;
 using namespace std;
 int main(int argc,char ** argv){
+#if 0
 	if(argc < 2){
 		cout <<	"usage error " << endl;
 	}
@@ -37,6 +39,17 @@ int main(int argc,char ** argv){
 #endif
 
 	waitKey();
+#endif
+
+	cv::Point2f p1(0.0,0.0);
+	cv::Point2f p2(3.0,3.0);
+	cv::Point2f p3(3.0,-2.0);
+
+	Point2f  p1_p2 = p1-p2;
+	printf("p1-p2 = (%f,%f) \n" ,p1_p2.x,p1_p2.y);
+
+	Point2f  p2_p1 = p2-p1;
+	printf("p2-p1 = (%f,%f) \n" ,p2_p1.x,p2_p1.y);
 
 return 0;
 }
