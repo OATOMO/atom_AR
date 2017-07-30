@@ -39,7 +39,6 @@ int main(int argc,char ** argv){
 #endif
 
 	waitKey();
-#endif
 
 	cv::Point2f p1(0.0,0.0);
 	cv::Point2f p2(3.0,3.0);
@@ -50,6 +49,30 @@ int main(int argc,char ** argv){
 
 	Point2f  p2_p1 = p2-p1;
 	printf("p2-p1 = (%f,%f) \n" ,p2_p1.x,p2_p1.y);
+#endif
+	//test perspective
+	using namespace cv;
+	Mat src = imread("/home/atom/Desktop/ar.jpg");
+	Mat dis;
+	std::vector<Point2f> m_src;
+	std::vector<Point2f> m_dis;
+
+	m_src.push_back(Point2f(0,0));
+	m_src.push_back(Point2f(400,0));
+	m_src.push_back(Point2f(400,400));
+	m_src.push_back(Point2f(800,400));
+
+	m_dis.push_back(Point2f(0,0));
+	m_dis.push_back(Point2f(400,0));
+	m_dis.push_back(Point2f(0,400));
+	m_dis.push_back(Point2f(400,400));
+
+	Mat M = cv::getPerspectiveTransform(m_src,m_dis);
+	cv::warpPerspective(src,dis,M,Size(200,200));
+
+	imshow("src",src);
+	imshow("dis",dis);
+	waitKey();
 
 return 0;
 }

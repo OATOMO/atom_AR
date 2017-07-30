@@ -13,10 +13,8 @@ CC=g++
 #CFLAGS+=-g
 CFLAGS+=`pkg-config --cflags opencv`
 LDFLAGS+=`pkg-config --libs opencv`
-LDFLAGS+=-lglut -lGL 
 
-
-PROG=test
+PROG=test1
 OBJS=$(PROG).o
 
 .PHONY:	all clean

@@ -8,9 +8,14 @@ int main(int argc,char ** argv){
 		cout << "usage error" << endl;
 		return 0;
 	}
+	std::vector<Marker> possible_markers;
+	std::vector<Marker> final_markers;
+	
+
 	cv::Mat image = cv::imread(argv[1]);
-	Grab_Rect GRect(image);	
-	GRect.proc();
+	Grab_Rect GRect(image,100,40);	
+	GRect.markerDetect(possible_markers);
+	GRect.markerRecognize(image,possible_markers,final_markers);
 
 return 0;
 }
