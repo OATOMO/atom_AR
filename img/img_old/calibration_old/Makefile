@@ -11,16 +11,15 @@
 
 CC=g++
 #CFLAGS+=-g
-CFLAGS+=`pkg-config --cflags opencv` -I./
-LDFLAGS+=`pkg-config --libs opencv` -lglut -lGL
+CFLAGS+=`pkg-config --cflags opencv`
+LDFLAGS+=`pkg-config --libs opencv`
 
-PROG=bin
-OBJS=main.o grab_info.o
+PROG=test1
+OBJS=$(PROG).o
 
 .PHONY:	all clean
 $(PROG): $(OBJS)
 	$(CC) -o $(PROG) $(OBJS) $(LDFLAGS)
-	#$(CC) -g -o $(PROG).gdb $(OBJS) $(LDFLAGS)
 
 %.o: %.cpp
 	$(CC) -c $(CFLAGS) $<
