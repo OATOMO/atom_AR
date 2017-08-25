@@ -1,10 +1,10 @@
 #include "mygl.h"
 #include <QDebug>
 
-myGL::myGL(QWidget * parent)
+myGL::myGL(QWidget * parent):QGLWidget(parent)
 {
 	qDebug() << "myGL";
-	initWidget();
+    initWidget();
 	initializeGL();
 }
 
@@ -30,7 +30,7 @@ void myGL::paintGL(){
 	qDebug() << "paintGL";
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
-	glTranslatef( -1.5,  0.0, -6.0 );
+    glTranslatef( -1.5,  0.0, -6.0 );
 
 	glBegin( GL_QUADS );
 	glVertex3f(  -1.0,  1.0,  0.0 );

@@ -14,10 +14,10 @@ public:
 	myGL(QWidget * parent = 0);
 	~myGL(){};
 protected:
-	void initializeGL();
-	void initWidget();
-	void paintGL();
-	void resizeGL(int width, int height);
+    virtual void initializeGL();
+    void initWidget();
+    virtual void paintGL();
+    virtual void resizeGL(int width, int height);
 };
 
 #endif // MYGL_H

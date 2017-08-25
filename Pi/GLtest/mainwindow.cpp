@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+//        myGL * gl = new myGL();
+//        gl->show();
 }
 
 MainWindow::~MainWindow()

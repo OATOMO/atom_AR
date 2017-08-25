@@ -6,21 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>544</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="myGL" name="widget" native="true">
+   <widget class="myGL" name="widget_2" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>271</width>
-      <height>141</height>
+      <x>90</x>
+      <y>110</y>
+      <width>120</width>
+      <height>80</height>
      </rect>
     </property>
    </widget>
@@ -30,10 +33,16 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>544</width>
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuGl">
+    <property name="title">
+     <string>gl</string>
+    </property>
+   </widget>
+   <addaction name="menuGl"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
