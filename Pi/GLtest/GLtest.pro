@@ -1,22 +1,22 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-08-13T00:56:29
+# Project created by QtCreator 2017-08-24T21:39:24
 #
 #-------------------------------------------------
 
 QT       += core gui
-
+QT	+= opengl
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = AR
+TARGET = GLtest
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        ar.cpp \
-    drawgl.cpp
+        mainwindow.cpp \
+    mygl.cpp
 
-HEADERS  += ar.h \
-    drawgl.h
+HEADERS  += mainwindow.h \
+    mygl.h
 
-FORMS    += ar.ui
+FORMS    += mainwindow.ui

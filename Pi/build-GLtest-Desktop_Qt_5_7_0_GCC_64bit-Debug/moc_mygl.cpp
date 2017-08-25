@@ -1,16 +1,16 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'drawgl.h'
+** Meta object code from reading C++ file 'mygl.h'
 **
 ** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../AR/drawgl.h"
+#include "../GLtest/mygl.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'drawgl.h' doesn't include <QObject>."
+#error "The header file 'mygl.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
 #error "This file was generated using the moc from 5.7.0. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -18,25 +18,25 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-struct qt_meta_stringdata_drawGL_t {
+struct qt_meta_stringdata_myGL_t {
     QByteArrayData data[1];
-    char stringdata0[7];
+    char stringdata0[5];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_drawGL_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_myGL_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_drawGL_t qt_meta_stringdata_drawGL = {
+static const qt_meta_stringdata_myGL_t qt_meta_stringdata_myGL = {
     {
-QT_MOC_LITERAL(0, 0, 6) // "drawGL"
+QT_MOC_LITERAL(0, 0, 4) // "myGL"
 
     },
-    "drawGL"
+    "myGL"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_drawGL[] = {
+static const uint qt_meta_data_myGL[] = {
 
  // content:
        7,       // revision
@@ -52,7 +52,7 @@ static const uint qt_meta_data_drawGL[] = {
        0        // eod
 };
 
-void drawGL::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void myGL::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     Q_UNUSED(_o);
     Q_UNUSED(_id);
@@ -60,30 +60,28 @@ void drawGL::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
     Q_UNUSED(_a);
 }
 
-const QMetaObject drawGL::staticMetaObject = {
-    { &QOpenGLWidget::staticMetaObject, qt_meta_stringdata_drawGL.data,
-      qt_meta_data_drawGL,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+const QMetaObject myGL::staticMetaObject = {
+    { &QGLWidget::staticMetaObject, qt_meta_stringdata_myGL.data,
+      qt_meta_data_myGL,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
 
-const QMetaObject *drawGL::metaObject() const
+const QMetaObject *myGL::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *drawGL::qt_metacast(const char *_clname)
+void *myGL::qt_metacast(const char *_clname)
 {
     if (!_clname) return Q_NULLPTR;
-    if (!strcmp(_clname, qt_meta_stringdata_drawGL.stringdata0))
-        return static_cast<void*>(const_cast< drawGL*>(this));
-    if (!strcmp(_clname, "QOpenGLFunctions"))
-        return static_cast< QOpenGLFunctions*>(const_cast< drawGL*>(this));
-    return QOpenGLWidget::qt_metacast(_clname);
+    if (!strcmp(_clname, qt_meta_stringdata_myGL.stringdata0))
+        return static_cast<void*>(const_cast< myGL*>(this));
+    return QGLWidget::qt_metacast(_clname);
 }
 
-int drawGL::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int myGL::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QOpenGLWidget::qt_metacall(_c, _id, _a);
+    _id = QGLWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;

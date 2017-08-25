@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AR</class>
- <widget class="QMainWindow" name="AR">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,15 +11,15 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>AR</string>
+   <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="drawGL" name="widget" native="true">
+   <widget class="myGL" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>30</y>
-      <width>191</width>
+      <x>30</x>
+      <y>10</y>
+      <width>271</width>
       <height>141</height>
      </rect>
     </property>
@@ -48,9 +48,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>drawGL</class>
+   <class>myGL</class>
    <extends>QWidget</extends>
-   <header>drawgl.h</header>
+   <header>mygl.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

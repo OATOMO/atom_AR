@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'ar.ui'
+** Form generated from reading UI file 'mainwindow.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_AR_H
-#define UI_AR_H
+#ifndef UI_MAINWINDOW_H
+#define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -19,57 +19,57 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include "drawgl.h"
+#include "mygl.h"
 
 QT_BEGIN_NAMESPACE
 
-class Ui_AR
+class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    drawGL *widget;
+    myGL *widget;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
-    void setupUi(QMainWindow *AR)
+    void setupUi(QMainWindow *MainWindow)
     {
-        if (AR->objectName().isEmpty())
-            AR->setObjectName(QStringLiteral("AR"));
-        AR->resize(400, 300);
-        centralWidget = new QWidget(AR);
+        if (MainWindow->objectName().isEmpty())
+            MainWindow->setObjectName(QStringLiteral("MainWindow"));
+        MainWindow->resize(400, 300);
+        centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        widget = new drawGL(centralWidget);
+        widget = new myGL(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(90, 30, 191, 141));
-        AR->setCentralWidget(centralWidget);
-        menuBar = new QMenuBar(AR);
+        widget->setGeometry(QRect(30, 10, 271, 141));
+        MainWindow->setCentralWidget(centralWidget);
+        menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 400, 23));
-        AR->setMenuBar(menuBar);
-        mainToolBar = new QToolBar(AR);
+        MainWindow->setMenuBar(menuBar);
+        mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-        AR->addToolBar(Qt::TopToolBarArea, mainToolBar);
-        statusBar = new QStatusBar(AR);
+        MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
+        statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
-        AR->setStatusBar(statusBar);
+        MainWindow->setStatusBar(statusBar);
 
-        retranslateUi(AR);
+        retranslateUi(MainWindow);
 
-        QMetaObject::connectSlotsByName(AR);
+        QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
 
-    void retranslateUi(QMainWindow *AR)
+    void retranslateUi(QMainWindow *MainWindow)
     {
-        AR->setWindowTitle(QApplication::translate("AR", "AR", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
     } // retranslateUi
 
 };
 
 namespace Ui {
-    class AR: public Ui_AR {};
+    class MainWindow: public Ui_MainWindow {};
 } // namespace Ui
 
 QT_END_NAMESPACE
 
-#endif // UI_AR_H
+#endif // UI_MAINWINDOW_H
