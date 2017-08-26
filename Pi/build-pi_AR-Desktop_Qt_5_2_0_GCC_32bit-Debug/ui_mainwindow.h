@@ -15,12 +15,10 @@
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
-#include "mygl.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -28,9 +26,7 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    myGL *widget_2;
     QMenuBar *menuBar;
-    QMenu *menuGl;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -38,19 +34,13 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(544, 386);
+        MainWindow->resize(896, 423);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        widget_2 = new myGL(centralWidget);
-        widget_2->setObjectName(QStringLiteral("widget_2"));
-        widget_2->setEnabled(true);
-        widget_2->setGeometry(QRect(90, 110, 120, 80));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 544, 23));
-        menuGl = new QMenu(menuBar);
-        menuGl->setObjectName(QStringLiteral("menuGl"));
+        menuBar->setGeometry(QRect(0, 0, 896, 23));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -58,8 +48,6 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
-
-        menuBar->addAction(menuGl->menuAction());
 
         retranslateUi(MainWindow);
 
@@ -69,7 +57,6 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
-        menuGl->setTitle(QApplication::translate("MainWindow", "gl", 0));
     } // retranslateUi
 
 };
