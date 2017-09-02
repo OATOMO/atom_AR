@@ -9,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	grabThread * gThread = new grabThread();
-	gThread->start();
+//	grabThread * gThread = new grabThread();
+//	gThread->start();
 }
 
 MainWindow::~MainWindow()

@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT		 += opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,18 +13,27 @@ TARGET = pi_AR
 TEMPLATE = app
 
 
+CFLAGS+=`pkg-config --cflags opencv`
+LDFLAGS+=`pkg-config --libs opencv`
+
 SOURCES += main.cpp\
         mainwindow.cpp\
-        grabthread.cpp
+#        grabthread.cpp
+    mygl.cpp \
+    marker.cpp \
+    decode.cpp
 
 HEADERS  += mainwindow.h\
-        grabthread.h \
-	shareData.h
+#        grabthread.h \
+#	shareData.h
+    mygl.h \
+    marker.h \
+    decode.h
 
 INCLUDEPATH += /usr/local/include
 
 LIBS += -L/usr/local/lib \
-	/usr/local/lib/libopencv_core.so \
+    /usr/local/lib/libopencv_core.so \
 	/usr/local/lib/libopencv_features2d.so \
 	/usr/local/lib/libopencv_flann.so \
 	/usr/local/lib/libopencv_highgui.so \
@@ -37,7 +47,8 @@ LIBS += -L/usr/local/lib \
 	/usr/local/lib/libopencv_superres.so \
 	/usr/local/lib/libopencv_videoio.so \
 	/usr/local/lib/libopencv_video.so \
-	/usr/local/lib/libopencv_videostab.so
+    /usr/local/lib/libopencv_videostab.so \
+    /usr/local/lib/libopencv_calib3d.so
 
 
 FORMS    += mainwindow.ui

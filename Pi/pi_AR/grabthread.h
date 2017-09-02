@@ -30,9 +30,6 @@ public:
 protected:
 	virtual void run();
 
-private slots:
-	void hello(){qDebug() << "hello";};
-
 
 };
 

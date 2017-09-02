@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QtWidgets>
 
-
+#define MIN_LENGTH 35
+#define IMAGE_WIDTH 640
+#define IMAGE_HEIGHT 480
 
 
 class myGL:public QGLWidget
@@ -13,6 +15,9 @@ class myGL:public QGLWidget
 public:
 	myGL(QWidget * parent = 0);
 	~myGL(){};
+	//cam
+
+
 protected:
     virtual void initializeGL();
     void initWidget();

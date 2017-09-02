@@ -25,12 +25,27 @@ grabThread::grabThread(QObject * parent):QThread(parent){
 
 void grabThread::run(){
 	cv::Mat image;
-	cv::VideoCapture capture(0);
+	cv::VideoCapture capture("/dev/video0");
+	capture.open(0);
+	if(!capture.isOpened())
+		qDebug() << "failed to open";
 	capture >> image;
+#if 1
 	int x = image.cols;
 	qDebug() << x;
 	x =  image.rows;
 	qDebug() << x;
-	cv::imshow("1",image);
-	cv::waitKey();
+#endif
+
+
+	while(!image.empty()){
+		qDebug() << "has image";
+	imshow("[]",image);
+	capture >> image;
+	sleep(1);
+	}
+
 }
+
+//	qDebug() << "Total number of frame is :" << capture.get(cv::CAP_PROP_FRAME_COUNT);
+//	qDebug() << "current position:" << capture.get(cv::CAP_PROP_POS_MSEC);
