@@ -14,6 +14,42 @@
 */
 #include "mygl.h"
 #include "decode.h"
+GLfloat vertex[][3] = {
+	{-1.0,-1.0,2.0},{-1.0,1.0,2.0},{1.0,1.0,2.0},{1.0,-1.0,2.0},
+	{-1.0,-1.0,0.0},{-1.0,1.0,0.0},{1.0,1.0,0.0},{1.0,-1.0,0.0},
+};
+
+GLfloat colors[][3] = {
+	{1.0,0.0,0.0},{0.0,1.0,1.0},{1.0,1.0,0.0},{0.0,1.0,0.0},
+	{0.0,0.0,1.0},{1.0,1.0,1.0}
+};
+
+void polygon(int a,int b,int c,int d){
+	//glBegin(GL_POLYGON);
+	glBegin(GL_LINE_LOOP);
+	glVertex3fv(vertex[a]);
+	glVertex3fv(vertex[b]);
+	glVertex3fv(vertex[c]);
+	glVertex3fv(vertex[d]);
+	glEnd();
+}
+
+void cube(){
+	glColor3fv(colors[0]);
+	polygon(0,3,2,1);
+	glColor3fv(colors[2]);
+	polygon(2,3,7,6);
+	glColor3fv(colors[3]);
+	polygon(3,0,4,7);
+	glColor3fv(colors[1]);
+	polygon(1,2,6,5);
+	glColor3fv(colors[4]);
+	polygon(4,5,6,7);
+	glColor3fv(colors[5]);
+	polygon(5,4,0,1);
+
+}
+
 
 myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 //	cam.open(0);
@@ -24,26 +60,30 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 	clk.start(30);
 	QObject::connect(&clk,SIGNAL(timeout()),this,SLOT(updateWindow()));
 
-	cameraMatrix.at<double>(0,0) = 1112.75949f;
-	cameraMatrix.at<double>(0,1) = 0.0f;
-	cameraMatrix.at<double>(0,2) = 284.84473f;
-	cameraMatrix.at<double>(1,0) = 0.0f;
-	cameraMatrix.at<double>(1,1) = 1112.75949f;
-	cameraMatrix.at<double>(1,2) = -100.38948f;
-	cameraMatrix.at<double>(2,0) = 0.0f;
-	cameraMatrix.at<double>(2,1) = 0.0f;
-	cameraMatrix.at<double>(2,2) = 1.0f;
+	cameraMatrix.at<float>(0,0) = 1112.75949f;
+	cameraMatrix.at<float>(0,1) = 0.0f;
+	cameraMatrix.at<float>(0,2) = 284.84473f;
+	cameraMatrix.at<float>(1,0) = 0.0f;
+	cameraMatrix.at<float>(1,1) = 1112.75949f;
+	cameraMatrix.at<float>(1,2) = -100.38948f;
+	cameraMatrix.at<float>(2,0) = 0.0f;
+	cameraMatrix.at<float>(2,1) = 0.0f;
+	cameraMatrix.at<float>(2,2) = 1.0f;
 
-	distCoeffs.at<double>(0,0) = -0.823854f;
-	distCoeffs.at<double>(0,1) = 2.014462f;
-	distCoeffs.at<double>(0,2) = 0.050665f;
-	distCoeffs.at<double>(0,3) = 0.006921f;
-	distCoeffs.at<double>(0,4) = -3.729648f;
+	distCoeffs.at<float>(0,0) = -0.823854f;
+	distCoeffs.at<float>(0,1) = 2.014462f;
+	distCoeffs.at<float>(0,2) = 0.050665f;
+	distCoeffs.at<float>(0,3) = 0.006921f;
+//	distCoeffs.at<float>(0,4) = -3.729648f;
 
-	Xworld.push_back(cv::Point3f(-0.5, -0.5, 0));
+//	Xworld.push_back(cv::Point3f(-0.5, -0.5, 0));
+//	Xworld.push_back(cv::Point3f(-0.5, 0.5, 0));
+//	Xworld.push_back(cv::Point3f(0.5, 0.5, 0));
+//	Xworld.push_back(cv::Point3f(0.5, -0.5, 0));
 	Xworld.push_back(cv::Point3f(-0.5, 0.5, 0));
-	Xworld.push_back(cv::Point3f(0.5, 0.5, 0));
+	Xworld.push_back(cv::Point3f(-0.5, -0.5, 0));
 	Xworld.push_back(cv::Point3f(0.5, -0.5, 0));
+	Xworld.push_back(cv::Point3f(0.5, 0.5, 0));
 	WINDOW_SIZE = 0.5;
 
 }
@@ -56,8 +96,8 @@ void myGL::initializeGL()
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+//	glEnable(GL_DEPTH_TEST);
+//	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
 
@@ -68,21 +108,22 @@ void myGL::resizeGL(int width, int height)
 		height = 1;
 	}
 
-	intrinsicMatrix2ProjectionMatrix(cameraMatrix, 640, 480, 0.01f, 100.0f);
+//	intrinsicMatrix2ProjectionMatrix(cameraMatrix, 640, 480, 0.01f, 100.0f);
+	intrinsicMatrix2ProjectionMatrix(cameraMatrix, width, height, 0.01f, 100.0f);
 
 	glViewport(0, 0, (GLint)width, (GLint)height);//重置当前的物体显示位置
 	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);//选择矩阵模式
+//	glMatrixMode(GL_PROJECTION);//选择矩阵模式
+//	glMultMatrixf(projection_matrix);//导入相机内部参数模型
+//	glLoadMatrixf(projection_matrix);
 
-	//导入相机内部参数模型
-	glMultMatrixf(projection_matrix);
 
-	//glLoadMatrixf(projection_matrix);
-	//glEnableClientState(GL_VERTEX_ARRAY);  //启用客户端的某项功能
-	//glEnableClientState(GL_NORMAL_ARRAY);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	glEnableClientState(GL_VERTEX_ARRAY);  //启用客户端的某项功能
+	glEnableClientState(GL_NORMAL_ARRAY);
+
+//	glMatrixMode(GL_MODELVIEW);
+//	glLoadIdentity();
 }
 void myGL::initWidget()
 {
@@ -93,7 +134,13 @@ void myGL::initWidget()
 void myGL::updateWindow(){
 	//get camera data
 	cam >> srcImage;
-	cv::cvtColor(srcImage,srcImage,CV_BGR2RGB); //opencv to opengl format
+//	srcImage.release(); srcImage = cv::imread("/opt/git_Atom/atom_AR/img/img_8_12/arok2.jpg");
+//	srcImage.release(); srcImage = cv::imread("/opt/git_Atom/atom_AR/img/img_old/ar5.jpg");
+	qDebug() << srcImage.channels() <<srcImage.cols << srcImage.rows;
+//	cv::imshow("1",srcImage);
+//	cv::waitKey();
+
+//	cv::cvtColor(srcImage,srcImage,CV_BGR2RGB); //opencv to opengl format
 
 	imageProcess(srcImage);
 
@@ -111,8 +158,10 @@ void myGL::updateWindow(){
 	glGenTextures(1, &textureBack);//对应图片的纹理定义
 	glBindTexture(GL_TEXTURE_2D, textureBack);//进行纹理绑定
 	//纹理创建
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, srcImage.cols, srcImage.rows, 0,
+		GL_RGB, GL_UNSIGNED_BYTE, srcImage.data);
+//	glTexImage2D(GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0,
+//		GL_RGB, GL_UNSIGNED_BYTE, tex.bits());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	updateGL();
@@ -133,20 +182,69 @@ void myGL::imageProcess(cv::Mat srcImage){
 void myGL::paintGL(){
 	qDebug() << "paintGL !!!";
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glLoadIdentity();//重置坐标系至屏幕中央 上+下- 左-右+ 里-外+
-//		glTranslatef(3.2f, -0.6f, -100);//讲显示背景沿Z轴向后移动足够距离，防止遮挡渲染物体
-//		glScalef(8.35f,8.35f,1.0f);//平移 放大 实现窗口填充-
+	cv::imshow("2",srcImage);
+	cv::waitKey();
+
+//		glPushMatrix();
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//		glLoadIdentity();//重置坐标系至屏幕中央 上+下- 左-右+ 里-外+
+
+		GLfloat w,h;
+		w=640;h=480;
+		const GLfloat bgTextureVertices[] = { 0, 0, w, 0, 0, h, w, h };
+		const GLfloat bgTextureCoords[] = { 1, 0, 1, 1, 0, 0, 0, 1 };
+		static const GLfloat proj[] = {
+			0,-2.0f/640,0,0,
+			-2.0f/480,0,0,0,
+			0,0,1,0,
+			1,1,0,1
+		};
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glLoadMatrixf(proj);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
 
-		//绑定纹理
+
+
+	#if 1//绑定纹理
+
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, textureBack);
-		glBegin(GL_QUADS);//绘制图形接口，与glEnd()对应
-			glTexCoord2f(0.0, 0.0); glVertex3f(-4, -3, 0);//
-			glTexCoord2f(1.0, 0.0); glVertex3f(4, -3, 0);
-			glTexCoord2f(1.0, 1.0); glVertex3f(4, 3, 0);
-			glTexCoord2f(0.0, 1.0); glVertex3f(-4, 3, 0);
-		glEnd();
+//		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glVertexPointer(2, GL_FLOAT, 0, bgTextureVertices);
+		  glTexCoordPointer(2, GL_FLOAT, 0, bgTextureCoords);
+
+		  glColor4f(1,1,1,1);
+		  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+//		  glDisableClientState(GL_VERTEX_ARRAY);
+		  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisable(GL_TEXTURE_2D);
+
+	#endif
+	//		glPopMatrix();
+
+//		printMatrix(GL_MODELVIEW/*,"123"*/);
+
+//draw AR
+	glMatrixMode(GL_PROJECTION);//选择矩阵模式
+	glLoadIdentity();
+	glLoadMatrixf(projection_matrix);//导入相机内部参数模型
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	GLfloat modelview[16];
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+
+
+	glPushMatrix();
+	glLineWidth(3.f);
+
 
 	float lineX[] = {0,0,0,1,0,0};
 	float lineY[] = {0,0,0,0,1,0};
@@ -175,8 +273,15 @@ void myGL::paintGL(){
 		glColor4f(0.0f,0.0f,1.0f,1.0f);
 		glVertexPointer(3,GL_FLOAT,0,lineZ);
 		glDrawArrays(GL_LINES,0,2);
+
+
+		cube();
 		//end draw ---------------------------------
 	}
+	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+
+
+glPopMatrix();
 
 }
 
@@ -229,7 +334,15 @@ void myGL::extrinsicMatrix2ModelViewMatrix(cv::Mat& rotation, cv::Mat& translati
 	{
 		1, 0, 0,
 		0, 1, 0,
-		0, 0, -1
+		0, 0, 1
+	};
+#endif
+#if 0
+	static double d[] =
+	{
+		1, 0, 0,
+		0, -1, 0,
+		0, 0, 1
 	};
 #endif
 
@@ -263,6 +376,18 @@ void myGL::extrinsicMatrix2ModelViewMatrix(cv::Mat& rotation, cv::Mat& translati
 void myGL::updateParams(int timerValue)
 {
 	clk.start(timerValue);
+}
+
+void myGL::printMatrix(GLenum type/*, string &message*/){
+//	qDebug("%s :!!!\n",);
+	double modelview[16];
+	glGetDoublev(type, modelview);
+
+	qDebug("matrix = {");
+	for(int i = 0;i < 4;i++){
+		qDebug("%lf, %lf, %lf, %lf,",modelview[i*4+0],modelview[i*4+1],modelview[i*4+2],modelview[i*4+3]);
+	}
+	qDebug("}\n");
 }
 
 void myGL::mousePressEvent(QMouseEvent *mouseEvent)

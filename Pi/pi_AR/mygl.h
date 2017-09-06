@@ -37,11 +37,11 @@ public:
 	cv::Mat srcImage;
 	cv::VideoCapture cam,video;
 	vector<cv::Point3f> Xworld;
-	vector<GLdouble> rotMatrix;//某一个标记的变换矩阵
-	GLdouble rotMat[16];//为了对应opengl函数格式定义的数组
-	vector<vector<GLdouble> >  RotationMatrix;//将所有的变换矩阵保存同一渲染
-	cv::Mat cameraMatrix = cv::Mat(3,3,CV_64FC1,1);
-	cv::Mat distCoeffs   = cv::Mat(1,5,CV_64FC1,1);
+	vector<GLfloat> rotMatrix;//某一个标记的变换矩阵
+	GLfloat rotMat[16];//为了对应opengl函数格式定义的数组
+	vector<vector<GLfloat> >  RotationMatrix;//将所有的变换矩阵保存同一渲染
+	cv::Mat cameraMatrix = cv::Mat(3,3,CV_32FC1,1);
+	cv::Mat distCoeffs   = cv::Mat(1,5,CV_32FC1,1);
 	float projection_matrix[16];//
 	float model_view_matrix[16];//
 	std::vector<Marker> possible_markers;
@@ -64,6 +64,7 @@ public:
 	void intrinsicMatrix2ProjectionMatrix(cv::Mat& camera_matrix, float width, float height, float near_plane, float far_plane);
 	void extrinsicMatrix2ModelViewMatrix(cv::Mat& rotation, cv::Mat& translation);
 	void imageProcess(cv::Mat);
+	void printMatrix(GLenum type/*,string &message*/);
 
 protected:
 	void initializeGL();
