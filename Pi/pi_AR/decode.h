@@ -49,6 +49,7 @@ private:
 public:
 	void markerDetect(std::vector<Marker> & possible_marker);
 	void markerRecognize(std::vector<Marker>& possible_markers,std::vector<Marker>& final_markers);
+	int hammDistMarker(cv::Mat bits);
 };
 
 #endif // DECODE_H

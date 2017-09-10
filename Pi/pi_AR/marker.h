@@ -39,6 +39,7 @@ class Marker
 {
 public:
 	int m_id;
+	int nRotations;
 	std::vector<cv::Point2f> m_corners;
 
 public:

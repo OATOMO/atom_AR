@@ -20,6 +20,7 @@ inline T min(T a,T b){
 	return (a < b ? a : b);
 }
 
+cv::Mat rotate(cv::Mat in);
 
 Decode::Decode(cv::Mat & src,unsigned int min_size,unsigned int min_side_length){
 	this->src = src;
@@ -51,6 +52,7 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 	cv::Mat element = cv::getStructuringElement(
 					cv::MORPH_RECT, cv::Size(3, 3));
 	cv::morphologyEx(dst,dst,cv::MORPH_OPEN,element);
+	cv::imshow("mor",dst);//test
 //	cv::imwrite("/home/atom/Desktop/proc/morph_open.png",dst);
 
 	//轮廓
@@ -126,6 +128,10 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<Marker>& final_markers){
 	final_markers.clear();
 
+	cv::Mat rotations[4];  //hamm检测时每次旋转后的矩阵5*5   
+	int distances[4];	   //4个方向的hamm距离
+	std::pair<int,int> minDist(distances[0],0); //hamm的信息,<距离,旋转次数>
+
 	//cv::flip(img_gray,img_gray,0);
 	cv::Mat img_gray = this->src;
 	if(img_gray.channels() != 1){
@@ -167,8 +173,6 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 			}
 		}//end AR边界确认
 
-		//给通过的MARKER码一个ID
-		possible_markers.at(i).m_id = i;
 
 		//Decode the Marker 解码,读取1010值
 		for (int y = 0;y < 5;y++){
@@ -183,6 +187,36 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 			}
 		}
 
+	//检测4个反向的hamm距离,为0才能通过
+	minDist.first = INT_MAX;    
+
+    rotations[0] = bit_matrix;  
+	distances[0] = hammDistMarker(rotations[0]);
+			    
+				  
+	for (int i=1; i<4; i++){
+		rotations[i] = rotate(rotations[i-1]);
+		distances[i] = hammDistMarker(rotations[i]);
+							      
+		if (distances[i] < minDist.first){
+			minDist.first  = distances[i];
+		    minDist.second = i;
+		}
+	}
+
+	if (minDist.first != 0){
+		//没通过的话下一个  (还有谁....)
+		goto __wrongMarker;
+	}
+	possible_markers[i].nRotations = minDist.second;//hamm距离为0的旋转次数推入
+
+
+
+	
+//		possible_markers.at(i).m_id = i;//给通过的MARKER码一个ID
+
+		cv::imshow("threshold",marker_image);//test
+
 		//通过之后把点集推入final
 	//    std::rotate(final_markers[i].m_corners.begin(), final_markers[i].m_corners.begin() + rotation_idx, final_markers[i].m_corners.end());
 		final_markers.push_back(possible_markers[i]);
@@ -194,10 +228,58 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 		Dbug("\n");
 		continue;
 	__wrongMarker:
-		printf("pass\n");
+//		printf("pass\n");
 		continue;
 	}//end for
 
 //		cv::imshow("maker",src);
 //		cv::waitKey();
+}
+
+//用来计算hamm距离
+int Decode::hammDistMarker(cv::Mat bits){
+	int ids[4][5]={
+		{1,0,0,0,0},
+		{1,0,1,1,1},
+		{0,1,0,0,1},
+		{0,1,1,1,0}
+	};
+
+	int dist=0;
+
+	for (int y=0;y<5;y++){
+		int minSum=1e5; //hamming distance to each possible word
+
+		for (int p=0;p<4;p++){
+			int sum=0;
+			//now, count
+			for (int x=0;x<5;x++){
+				sum += bits.at<uchar>(y,x) == ids[p][x] ? 0 : 1;
+			}
+
+			if (minSum>sum)
+			minSum=sum;
+		}//end for (int p=0;p<4;p++)
+
+		//do the and
+		dist += minSum;
+	}//end for (int y=0;y<5;y++)
+
+return dist;
+}//end hammDistMarker
+
+
+//hamm检测时旋转一个方向(顺时针)(5*5)
+cv::Mat rotate(cv::Mat in)
+{
+  cv::Mat out;
+  in.copyTo(out);
+  for (int i=0;i<in.rows;i++)
+  {
+	for (int j=0;j<in.cols;j++)
+	{
+	  out.at<uchar>(i,j)=in.at<uchar>(in.cols-j-1,i);
+	}
+  }
+  return out;
 }
