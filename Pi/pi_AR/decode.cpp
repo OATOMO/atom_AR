@@ -43,7 +43,7 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 	/*"AR码检测"*/
 	cv::cvtColor(src,dst,cv::COLOR_BGR2GRAY);
 	cv::threshold(dst,dst,100,255,cv::THRESH_BINARY_INV);
-	cv::imwrite("/home/atom/Desktop/proc/th.png",dst);
+//	cv::imwrite("/home/atom/Desktop/proc/th.png",dst);
 #if 0
 	cv::blur(dst,dst,cv::Size(3,3));//模糊,去除毛刺
 //	cv::imwrite("/home/atom/Desktop/proc/blur.png",dst);
@@ -60,19 +60,21 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Vec4i> all_hierarchy;
 	std::vector<cv::Vec4i> hierarchy;
-	cv::findContours(dst,all_contours,hierarchy,
-					cv::RETR_TREE,cv::CHAIN_APPROX_NONE,cv::Point(0,0));
+//	cv::findContours(dst,all_contours,hierarchy,cv::RETR_TREE,cv::CHAIN_APPROX_NONE,cv::Point(0,0));
+	cv::findContours(dst, all_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
-	Dbug("all_contours.size() -> %ld\n",all_contours.size());
+	cv::drawContours(src,all_contours,-1,cv::Scalar(0,0,255),1,8);
+
+	qDebug("contours count = all_contours.size() -> %ld\n",all_contours.size());
 	for (unsigned int i = 0;i < all_contours.size();i++){
 		if(all_contours[i].size() > min_size){
-			Dbug("\tall_contours[%d] = %ld\n",i,all_contours[i].size());
+			qDebug("\tcontors size = all_contours[%d] = %ld\n",i,all_contours[i].size());
 			contours.push_back(all_contours[i]);
 			//hierarchy.push_back(all_hierarchy[i]);
 		}
 	}
 
-	Dbug("contours.size() = %ld \n",contours.size());
+	qDebug("contours size > %d contours count = contours.size() = %ld \n",min_size,contours.size());
 
 	//4边形逼近
 	std::vector<cv::Point> approx_poly;//polygon
@@ -83,7 +85,7 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 		if(approx_poly.size() != 4)
 			continue; //只要4边型
 
-		Dbug("\tapprox_poly.size() = %ld\n",approx_poly.size());
+//		qDebug("\tapprox_poly.size() = %ld\n",approx_poly.size());
 
 		if(!cv::isContourConvex(approx_poly))
 			continue; //只要凸多边形
@@ -103,7 +105,7 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 		if(v1.cross(v2) > 0){
 			swap(marker.m_corners[1],marker.m_corners[3]);
 		}
-		marker.sort();
+//		marker.sort();
 #if 0
 		//判断是否平行
 		Parallel_rect Para(marker.m_corners[0],marker.m_corners[1],marker.m_corners[2],marker.m_corners[3]);
@@ -130,7 +132,7 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 
 	cv::Mat rotations[4];  //hamm检测时每次旋转后的矩阵5*5   
 	int distances[4];	   //4个方向的hamm距离
-	std::pair<int,int> minDist(distances[0],0); //hamm的信息,<距离,旋转次数>
+	std::pair<int,int> minDist(INT_MAX,0); //hamm的信息,<距离,旋转次数>
 
 	//cv::flip(img_gray,img_gray,0);
 	cv::Mat img_gray = this->src;
@@ -145,7 +147,7 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 //	cv::imshow("img_gray",img_gray);
 //	cv::waitKey();
 
-	printf("!!!possible_markers.size() = %d\n ",(int)possible_markers.size());
+	qDebug("Recognize Marker count = possible_markers.size() = %d\n ",(int)possible_markers.size());
 	for (int i = 0;i < (int)possible_markers.size();i++){
 		//透视变换
 		//先通过(变换前的坐标点和 变换后的坐标点)来得到一个变换矩阵
@@ -161,7 +163,7 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 
 		//Dbug("marker_image (%d,%d)",marker_image.cols,marker_image.rows);
 
-			////A marker must has a whole black border.一个MARKER必须有完整的黑色边界
+		//A marker must has a whole black border.一个MARKER必须有完整的黑色边界
 		for (int y = 0;y < 7;y++){ //因为AR码是7x7
 			int inc = ((y == 0 || y == 6) ? 1 : 6);  //因为第一行和第7行有7各黑色块
 			int cell_y = y*MARKER_CELL_SIZE;  //黑块的起始y
@@ -192,8 +194,9 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 
     rotations[0] = bit_matrix;  
 	distances[0] = hammDistMarker(rotations[0]);
+	minDist.first = distances[0];
+	minDist.second = 0;
 			    
-				  
 	for (int i=1; i<4; i++){
 		rotations[i] = rotate(rotations[i-1]);
 		distances[i] = hammDistMarker(rotations[i]);
@@ -220,8 +223,9 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 		//通过之后把点集推入final
 	//    std::rotate(final_markers[i].m_corners.begin(), final_markers[i].m_corners.begin() + rotation_idx, final_markers[i].m_corners.end());
 		final_markers.push_back(possible_markers[i]);
-		//显示Marker边框
-		possible_markers.at(i).drawToImage(src,cv::Scalar(0,100,255),2);
+
+		//possible_markers.at(i).drawToImage(src,cv::Scalar(0,100,255),2);//显示Marker边框
+
 
 		for(int i = 0;i < 25;i++)
 		Dbug("%d",bit_matrix.data[i]);
@@ -231,6 +235,41 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 //		printf("pass\n");
 		continue;
 	}//end for
+	qDebug("Pass completely count = %d\n!!!!",final_markers.size());
+	if(final_markers.size() > 2){//
+		final_markers[0].printPoint(dst,1);
+		final_markers[1].printPoint(dst,1);
+	}
+
+	// Refine marker corners using sub pixel accuracy********************
+		if (final_markers.size() > 0)
+		{
+			std::vector<cv::Point2f> preciseCorners(4 *final_markers.size());
+
+			for (size_t i=0; i<final_markers.size(); i++)
+			{
+				const Marker& marker = final_markers[i];
+
+				for (int c = 0; c <4; c++)
+				{
+					preciseCorners[i*4 + c] = marker.m_corners[c];
+				}
+			}
+
+			cv::TermCriteria termCriteria = cv::TermCriteria(cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS, 30, 0.01);
+			cv::cornerSubPix(dst, preciseCorners, cvSize(5,5), cvSize(-1,-1), termCriteria);
+
+			// Copy refined corners position back to markers
+			for (size_t i=0; i<final_markers.size(); i++)
+			{
+				Marker& marker =final_markers[i];
+
+				for (int c=0;c<4;c++)
+				{
+					marker.m_corners[c] = preciseCorners[i*4 + c];
+				}
+			}
+	}//end sub pixel accuracy*******************************************
 
 //		cv::imshow("maker",src);
 //		cv::waitKey();

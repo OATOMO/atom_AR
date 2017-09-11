@@ -142,11 +142,18 @@ void Marker::sort(void){
 	m_corners[3] = up[1];
 }
 
-void Marker::printPoint(cv::Mat & image){
-	for(unsigned int i = 0;i < m_corners.size();i++){
-	char  buf[15];
-	sprintf(buf,"(%d,%d)",(int)m_corners[i].x,(int)m_corners[i].y);
-	std::string s = buf;
-	cv::putText(image,s,m_corners[i],cv::FONT_HERSHEY_PLAIN,0.5,cv::Scalar(100,100,255));
+void Marker::printPoint(cv::Mat & image,int mode){
+	if(0 == mode)
+		for(unsigned int i = 0;i < m_corners.size();i++){
+		char  buf[15];
+		sprintf(buf,"(%d,%d)",(int)m_corners[i].x,(int)m_corners[i].y);
+		std::string s = buf;
+		cv::putText(image,s,m_corners[i],cv::FONT_HERSHEY_PLAIN,0.5,cv::Scalar(100,100,255));
+	}
+	else{
+		for(unsigned int i = 0;i < m_corners.size();i++){
+		printf("point (%d,%d) ",(int)m_corners[i].x,(int)m_corners[i].y);
+		}
 	}
 }
+

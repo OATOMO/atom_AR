@@ -53,7 +53,8 @@ void cube(){
 
 myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 //	cam.open(0);
-	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/myGL1.h264");
+//	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/myGL1.h264");
+	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/1.h264");
 	initWidget();
 	initializeGL();
 
@@ -183,7 +184,7 @@ void myGL::paintGL(){
 	qDebug() << "paintGL !!!";
 
 	cv::imshow("2",srcImage);
-	cv::waitKey();
+//	cv::waitKey();
 
 //		glPushMatrix();
 
@@ -283,6 +284,7 @@ void myGL::paintGL(){
 
 glPopMatrix();
 
+cv::waitKey();//test
 }
 
 void myGL::loadGLTextures(){
