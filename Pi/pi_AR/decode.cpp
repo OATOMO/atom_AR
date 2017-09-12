@@ -22,6 +22,8 @@ inline T min(T a,T b){
 
 cv::Mat rotate(cv::Mat in);
 
+/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ * structuer func */
 Decode::Decode(cv::Mat & src,unsigned int min_size,unsigned int min_side_length){
 	this->src = src;
 	this->min_size = min_size;
@@ -32,7 +34,12 @@ Decode::Decode(cv::Mat & src,unsigned int min_size,unsigned int min_side_length)
 	m_marker_coords.push_back(cv::Point2f(MARKER_SIZE-1,0));
 }//end Marker class
 
-/* func:找到可能是的码放入到possible_marker的向量中
+
+
+
+
+/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ *  func:找到可能是的码放入到possible_marker的向量中
  * 
  * 多边形近似条件:
  *	 1.只有4个顶点
@@ -40,6 +47,8 @@ Decode::Decode(cv::Mat & src,unsigned int min_size,unsigned int min_side_length)
  *	 3.每一个边长度不能过小
  * */
 void Decode::markerDetect(std::vector<Marker> & possible_marker){
+//	qDebug() << "initing possible_Marker.size = "<< possible_marker.size();//test
+
 	/*"AR码检测"*/
 	cv::cvtColor(src,dst,cv::COLOR_BGR2GRAY);
 	cv::threshold(dst,dst,100,255,cv::THRESH_BINARY_INV);
@@ -52,7 +61,7 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 	cv::Mat element = cv::getStructuringElement(
 					cv::MORPH_RECT, cv::Size(3, 3));
 	cv::morphologyEx(dst,dst,cv::MORPH_OPEN,element);
-	cv::imshow("mor",dst);//test
+//	cv::imshow("mor",dst);//test
 //	cv::imwrite("/home/atom/Desktop/proc/morph_open.png",dst);
 
 	//轮廓
@@ -63,18 +72,18 @@ void Decode::markerDetect(std::vector<Marker> & possible_marker){
 //	cv::findContours(dst,all_contours,hierarchy,cv::RETR_TREE,cv::CHAIN_APPROX_NONE,cv::Point(0,0));
 	cv::findContours(dst, all_contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 
-	cv::drawContours(src,all_contours,-1,cv::Scalar(0,0,255),1,8);
+//	cv::drawContours(src,all_contours,-1,cv::Scalar(0,0,255),1,8);
 
-	qDebug("contours count = all_contours.size() -> %ld\n",all_contours.size());
+//	qDebug("contours count = all_contours.size() -> %ld\n",all_contours.size());
 	for (unsigned int i = 0;i < all_contours.size();i++){
 		if(all_contours[i].size() > min_size){
-			qDebug("\tcontors size = all_contours[%d] = %ld\n",i,all_contours[i].size());
+//			qDebug("\tcontors size = all_contours[%d] = %ld\n",i,all_contours[i].size());
 			contours.push_back(all_contours[i]);
 			//hierarchy.push_back(all_hierarchy[i]);
 		}
 	}
 
-	qDebug("contours size > %d contours count = contours.size() = %ld \n",min_size,contours.size());
+//	qDebug("contours size > %d contours count = contours.size() = %ld \n",min_size,contours.size());
 
 	//4边形逼近
 	std::vector<cv::Point> approx_poly;//polygon
@@ -133,6 +142,7 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 	cv::Mat rotations[4];  //hamm检测时每次旋转后的矩阵5*5   
 	int distances[4];	   //4个方向的hamm距离
 	std::pair<int,int> minDist(INT_MAX,0); //hamm的信息,<距离,旋转次数>
+	int hammID = 0;			//marker ID;
 
 	//cv::flip(img_gray,img_gray,0);
 	cv::Mat img_gray = this->src;
@@ -147,7 +157,7 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 //	cv::imshow("img_gray",img_gray);
 //	cv::waitKey();
 
-	qDebug("Recognize Marker count = possible_markers.size() = %d\n ",(int)possible_markers.size());
+//	qDebug("Recognize Marker count = possible_markers.size() = %d\n ",(int)possible_markers.size());
 	for (int i = 0;i < (int)possible_markers.size();i++){
 		//透视变换
 		//先通过(变换前的坐标点和 变换后的坐标点)来得到一个变换矩阵
@@ -197,13 +207,13 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 	minDist.first = distances[0];
 	minDist.second = 0;
 			    
-	for (int i=1; i<4; i++){
-		rotations[i] = rotate(rotations[i-1]);
-		distances[i] = hammDistMarker(rotations[i]);
-							      
-		if (distances[i] < minDist.first){
-			minDist.first  = distances[i];
-		    minDist.second = i;
+	for (int j=1; j<4; j++){
+		rotations[j] = rotate(rotations[j-1]);
+		distances[j] = hammDistMarker(rotations[j]);
+
+		if (distances[j] < minDist.first){
+			minDist.first  = distances[j];
+			minDist.second = j;
 		}
 	}
 
@@ -212,11 +222,20 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 		goto __wrongMarker;
 	}
 	possible_markers[i].nRotations = minDist.second;//hamm距离为0的旋转次数推入
+	//给通过的MARKER码一个ID
+	hammID = 0;
+	for(int bitnum = 1;bitnum < 25;bitnum+=2){
+		hammID |= rotations[minDist.second].at<uchar>(bitnum/5,bitnum%5) & 0x01;
+		hammID  = hammID<< 1;
+	}
 
+	possible_markers[i].m_id = hammID;
 
+	qDebug() << "ID = " << hammID;
+	qDebug() << "nRotations" << possible_markers[i].nRotations;
 
 	
-//		possible_markers.at(i).m_id = i;//给通过的MARKER码一个ID
+	//possible_markers.at(i).m_id = i;//给通过的MARKER码一个ID
 
 		cv::imshow("threshold",marker_image);//test
 
@@ -227,19 +246,19 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 		//possible_markers.at(i).drawToImage(src,cv::Scalar(0,100,255),2);//显示Marker边框
 
 
-		for(int i = 0;i < 25;i++)
-		Dbug("%d",bit_matrix.data[i]);
-		Dbug("\n");
+//		for(int i = 0;i < 25;i++)
+//		Dbug("%d",bit_matrix.data[i]);
+//		Dbug("\n");
 		continue;
 	__wrongMarker:
 //		printf("pass\n");
 		continue;
 	}//end for
-	qDebug("Pass completely count = %d\n!!!!",final_markers.size());
-	if(final_markers.size() > 2){//
-		final_markers[0].printPoint(dst,1);
-		final_markers[1].printPoint(dst,1);
-	}
+//	qDebug("Pass completely count = %d\n!!!!",final_markers.size());
+//	if(final_markers.size() > 2){//
+//		final_markers[0].printPoint(dst,1);
+//		final_markers[1].printPoint(dst,1);
+//	}
 
 	// Refine marker corners using sub pixel accuracy********************
 		if (final_markers.size() > 0)

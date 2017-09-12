@@ -137,7 +137,7 @@ void myGL::updateWindow(){
 	cam >> srcImage;
 //	srcImage.release(); srcImage = cv::imread("/opt/git_Atom/atom_AR/img/img_8_12/arok2.jpg");
 //	srcImage.release(); srcImage = cv::imread("/opt/git_Atom/atom_AR/img/img_old/ar5.jpg");
-	qDebug() << srcImage.channels() <<srcImage.cols << srcImage.rows;
+//	qDebug() << srcImage.channels() <<srcImage.cols << srcImage.rows;
 //	cv::imshow("1",srcImage);
 //	cv::waitKey();
 
@@ -283,6 +283,11 @@ void myGL::paintGL(){
 
 
 glPopMatrix();
+
+//relase
+possible_markers.clear();
+final_markers.clear();
+
 
 cv::waitKey();//test
 }
