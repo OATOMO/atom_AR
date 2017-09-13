@@ -24,7 +24,7 @@ GLfloat colors[][3] = {
 	{0.0,0.0,1.0},{1.0,1.0,1.0}
 };
 
-void polygon(int a,int b,int c,int d){
+void myGL::polygon(int a,int b,int c,int d){
 	//glBegin(GL_POLYGON);
 	glBegin(GL_LINE_LOOP);
 	glVertex3fv(vertex[a]);
@@ -34,7 +34,7 @@ void polygon(int a,int b,int c,int d){
 	glEnd();
 }
 
-void cube(){
+void myGL::cube(){
 	glColor3fv(colors[0]);
 	polygon(0,3,2,1);
 	glColor3fv(colors[2]);
@@ -261,6 +261,7 @@ void myGL::paintGL(){
 		//draw ------------------------------------
 		float scale = 0.5;
 		glScalef(scale,scale,scale);
+		glRotatef(90.0*final_markers[i].nRotations,0,0,1);
 
 		glColor4f(1.0f,0.0f,0.0f,1.0f);
 		glVertexPointer(3,GL_FLOAT,0,lineX);
@@ -289,7 +290,7 @@ possible_markers.clear();
 final_markers.clear();
 
 
-cv::waitKey();//test
+//cv::waitKey();//test
 }
 
 void myGL::loadGLTextures(){

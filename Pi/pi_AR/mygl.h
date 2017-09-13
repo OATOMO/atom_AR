@@ -65,6 +65,8 @@ public:
 	void extrinsicMatrix2ModelViewMatrix(cv::Mat& rotation, cv::Mat& translation);
 	void imageProcess(cv::Mat);
 	void printMatrix(GLenum type/*,string &message*/);
+	void polygon(int a,int b,int c,int d);
+	void cube();
 
 protected:
 	void initializeGL();
