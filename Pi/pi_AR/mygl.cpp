@@ -14,6 +14,83 @@
 */
 #include "mygl.h"
 #include "decode.h"
+
+#define PI 3.14159265358979323846
+#define PI2 6.28318530717958647692
+
+int uStepsNum = 50,vStepNum = 50;
+class Point
+{
+public:
+	Point(){};
+	Point(double a,double b,double c):x(a),y(b),z(c){};
+public:
+	double x;
+	double y;
+	double z;
+};
+
+Point getPoint(double u,double v)
+{
+	double x = sin(PI*v)*cos(PI2*u);
+	double y = sin(PI*v)*sin(PI2*u);
+	double z = cos(PI*v);
+	return Point(x,y,z);
+}
+
+void drawWire()
+{
+	double ustep = 1/(double)uStepsNum, vstep = 1/(double)vStepNum;
+	double u = 0,v = 0;
+	//绘制下端三角形组
+	for(int i = 0;i<uStepsNum;i++)
+	{
+		glBegin(GL_LINE_LOOP);
+		Point a = getPoint(0,0);
+		glVertex3d(a.x,a.y,a.z);
+		Point b = getPoint(u,vstep);
+		glVertex3d(b.x,b.y,b.z);
+		Point c = getPoint(u+ustep,vstep);
+		glVertex3d(c.x,c.y,c.z);
+		u += ustep;
+		glEnd();
+	}
+	//绘制中间四边形组
+	u = 0, v = vstep;
+	for(int i=1;i<vStepNum-1;i++)
+	{
+		for(int j=0;j<uStepsNum;j++)
+		{
+			glBegin(GL_LINE_LOOP);
+			Point a = getPoint(u,v);
+			Point b = getPoint(u+ustep,v);
+			Point c = getPoint(u+ustep,v+vstep);
+			Point d = getPoint(u,v+vstep);
+			glVertex3d(a.x,a.y,a.z);
+			glVertex3d(b.x,b.y,b.z);
+			glVertex3d(c.x,c.y,c.z);
+			glVertex3d(d.x,d.y,d.z);
+			u += ustep;
+			glEnd();
+		}
+		v += vstep;
+	}
+	//绘制下端三角形组
+	u = 0;
+	for(int i=0;i<uStepsNum;i++)
+	{
+		glBegin(GL_LINE_LOOP);
+		Point a = getPoint(0,1);
+		Point b = getPoint(u,1-vstep);
+		Point c = getPoint(u+ustep,1-vstep);
+		glVertex3d(a.x,a.y,a.z);
+		glVertex3d(b.x,b.y,b.z);
+		glVertex3d(c.x,c.y,c.z);
+		glEnd();
+	}
+}
+
+
 GLfloat vertex[][3] = {
 	{-1.0,-1.0,2.0},{-1.0,1.0,2.0},{1.0,1.0,2.0},{1.0,-1.0,2.0},
 	{-1.0,-1.0,0.0},{-1.0,1.0,0.0},{1.0,1.0,0.0},{1.0,-1.0,0.0},
@@ -277,7 +354,8 @@ void myGL::paintGL(){
 		glDrawArrays(GL_LINES,0,2);
 
 
-		cube();
+//		cube();
+		drawWire();
 		//end draw ---------------------------------
 	}
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
