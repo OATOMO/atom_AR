@@ -5,12 +5,15 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT		 += opengl
+QT       += opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = pi_AR
 TEMPLATE = app
+
+#INCLUDEPATH += /usr/include/GL/
+#LIBS+=-lglut -lGL -lGLU -lm
 
 
 CFLAGS+=`pkg-config --cflags opencv`
@@ -21,14 +24,17 @@ SOURCES += main.cpp\
 #        grabthread.cpp
     mygl.cpp \
     marker.cpp \
-    decode.cpp
+    decode.cpp \
+    #grabthread.cpp \
+    #moc_grabthread.cpp
 
 HEADERS  += mainwindow.h\
 #        grabthread.h \
 #	shareData.h
     mygl.h \
     marker.h \
-    decode.h
+    decode.h \
+    #grabthread.h
 
 INCLUDEPATH += /usr/local/include
 
