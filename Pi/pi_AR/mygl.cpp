@@ -18,7 +18,7 @@
 #define PI 3.14159265358979323846
 #define PI2 6.28318530717958647692
 
-int uStepsNum = 50,vStepNum = 50;
+int uStepsNum = 25,vStepNum = 25;
 class Point
 {
 public:
@@ -40,6 +40,8 @@ Point getPoint(double u,double v)
 
 void drawWire()
 {
+    glTranslatef(0,0,1.0);
+    glColor3f(0.5,0.5,0);
 	double ustep = 1/(double)uStepsNum, vstep = 1/(double)vStepNum;
 	double u = 0,v = 0;
 	//绘制下端三角形组
@@ -135,7 +137,7 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 	initWidget();
 	initializeGL();
 
-	clk.start(30);
+    clk.start(40);
 	QObject::connect(&clk,SIGNAL(timeout()),this,SLOT(updateWindow()));
 
 	cameraMatrix.at<float>(0,0) = 1112.75949f;
@@ -354,8 +356,9 @@ void myGL::paintGL(){
 		glDrawArrays(GL_LINES,0,2);
 
 
-//		cube();
-		drawWire();
+//        cube();
+
+        drawWire();
 		//end draw ---------------------------------
 	}
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
