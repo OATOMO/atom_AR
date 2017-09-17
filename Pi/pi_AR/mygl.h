@@ -20,6 +20,10 @@
 #include <QtOpenGL/QtOpenGL>
 #include <opencv2/opencv.hpp>
 #include "marker.h"
+#include <lib3ds/file.h>
+#include <lib3ds/mesh.h>
+#include "MeshModel.h"
+#include <QMatrix4x4>
 
 using namespace std;
 
@@ -67,6 +71,8 @@ public:
 	void printMatrix(GLenum type/*,string &message*/);
 	void polygon(int a,int b,int c,int d);
 	void cube();
+	void Load3DS(/*std::string Name*/);
+	float loadV[36*3];
 
 protected:
 	void initializeGL();

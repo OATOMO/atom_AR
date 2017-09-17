@@ -21,20 +21,26 @@ LDFLAGS+=`pkg-config --libs opencv`
 
 SOURCES += main.cpp\
         mainwindow.cpp\
-#        grabthread.cpp
     mygl.cpp \
     marker.cpp \
     decode.cpp \
+#	 files/Load3DS.cpp \
+#    files/LoadOBJ.cpp \
+#    MeshModel.cpp
+#   grabthread.cpp
     #grabthread.cpp \
     #moc_grabthread.cpp
 
 HEADERS  += mainwindow.h\
-#        grabthread.h \
-#	shareData.h
     mygl.h \
     marker.h \
     decode.h \
+#	files/Load3DS.h \
+#    files/LoadOBJ.h \
+#    MeshModel.h
     #grabthread.h
+#   grabthread.h \
+#	shareData.h
 
 INCLUDEPATH += /usr/local/include
 
@@ -54,7 +60,8 @@ LIBS += -L/usr/local/lib \
 	/usr/local/lib/libopencv_videoio.so \
 	/usr/local/lib/libopencv_video.so \
     /usr/local/lib/libopencv_videostab.so \
-    /usr/local/lib/libopencv_calib3d.so
+    /usr/local/lib/libopencv_calib3d.so \
+    -l3ds
 
 
 FORMS    += mainwindow.ui

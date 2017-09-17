@@ -14,9 +14,12 @@
 */
 #include "mygl.h"
 #include "decode.h"
+#include <GL/glu.h>
 
 #define PI 3.14159265358979323846
 #define PI2 6.28318530717958647692
+
+//cMeshModel *m_chanche;
 
 int uStepsNum = 25,vStepNum = 25;
 class Point
@@ -137,7 +140,8 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 	initWidget();
 	initializeGL();
 
-    clk.start(40);
+//	clk.start(1000);
+	clk.start(40);
 	QObject::connect(&clk,SIGNAL(timeout()),this,SLOT(updateWindow()));
 
 	cameraMatrix.at<float>(0,0) = 1112.75949f;
@@ -171,6 +175,9 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 void myGL::initializeGL()
 {
 	qDebug() << "at initializeGL";
+	Load3DS();
+//	 m_chanche = new cMeshModel(QString("chanche.3ds"));
+
 	loadGLTextures();		//加载图片文件
 	glEnable(GL_TEXTURE_2D);//启用纹理
 	glShadeModel(GL_SMOOTH);
@@ -355,10 +362,15 @@ void myGL::paintGL(){
 		glVertexPointer(3,GL_FLOAT,0,lineZ);
 		glDrawArrays(GL_LINES,0,2);
 
-
 //        cube();
+//		drawWire();
 
-        drawWire();
+
+		glScalef(0.2,0.2,0.2);
+		glColor4f(0.0f,0.0f,1.0f,1.0f);
+		glVertexPointer(3,GL_FLOAT,0,loadV);
+//		glDrawArrays(GL_TRIANGLES,0,36);
+		glDrawArrays(GL_LINE_LOOP,0,36);
 		//end draw ---------------------------------
 	}
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
@@ -481,5 +493,53 @@ void myGL::printMatrix(GLenum type/*, string &message*/){
 
 void myGL::mousePressEvent(QMouseEvent *mouseEvent)
 {
+
+}
+
+void myGL::Load3DS(/*std::string Name*/){
+	std::string Name = "/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/cube1.3ds";
+	Lib3dsFile * m_model;
+	Lib3dsVector * vertices;
+	int m_TotalFaces = 0;
+	m_model = lib3ds_file_load(Name.c_str());
+qDebug("1??");
+	if(!m_model){
+		throw strcat("Unable to load ",Name.c_str());
+	}
+qDebug("2??");
+	assert(m_model != NULL);
+
+	Lib3dsMesh * mesh;
+	// Loop through every mesh
+	for(mesh = m_model->meshes;mesh != NULL;mesh = mesh->next)
+	{
+		// Add the number of faces this mesh has to the total faces
+		m_TotalFaces += mesh->faces;
+	}
+	qDebug() << "m_TotalFaces =" << m_TotalFaces;
+
+	vertices    = new Lib3dsVector[m_TotalFaces * 3];
+	Lib3dsFace * face;
+	unsigned int FinishedFaces = 0;
+	for (mesh = m_model->meshes;mesh != NULL;mesh = mesh->next){
+		for(unsigned int cur_face = 0;cur_face < mesh->faces;cur_face++){
+			face = &mesh->faceL[cur_face];
+			for(unsigned int i = 0;i < 3;i++  ){
+				memcpy(&vertices[FinishedFaces*3 + i], mesh->pointL[face->points[ i ]].pos, sizeof(Lib3dsVector));
+			}
+			FinishedFaces++;
+		}
+
+	}
+
+
+	for(int x = 0;x < 3*m_TotalFaces;x++){
+		loadV[x*3+0] = vertices[x][0];
+		loadV[x*3+1] = vertices[x][1];
+		loadV[x*3+2] = vertices[x][2];
+
+	}
+//		loadV[j] = vertices[j];
+
 
 }

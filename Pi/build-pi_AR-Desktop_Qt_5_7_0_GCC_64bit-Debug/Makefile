@@ -36,7 +36,7 @@ DISTNAME      = pi_AR1.0.0
 DISTDIR = /opt/git_Atom/atom_AR/Pi/build-pi_AR-Desktop_Qt_5_7_0_GCC_64bit-Debug/.tmp/pi_AR1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/atom/Qt5.7.0/5.7/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/usr/local/lib /usr/local/lib/libopencv_core.so /usr/local/lib/libopencv_features2d.so /usr/local/lib/libopencv_flann.so /usr/local/lib/libopencv_highgui.so /usr/local/lib/libopencv_imgcodecs.so /usr/local/lib/libopencv_imgproc.so /usr/local/lib/libopencv_ml.so /usr/local/lib/libopencv_objdetect.so /usr/local/lib/libopencv_photo.so /usr/local/lib/libopencv_shape.so /usr/local/lib/libopencv_stitching.so /usr/local/lib/libopencv_superres.so /usr/local/lib/libopencv_videoio.so /usr/local/lib/libopencv_video.so /usr/local/lib/libopencv_videostab.so /usr/local/lib/libopencv_calib3d.so -L/home/atom/Qt5.7.0/5.7/gcc_64/lib -lQt5OpenGL -L/usr/lib64 -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/local/lib /usr/local/lib/libopencv_core.so /usr/local/lib/libopencv_features2d.so /usr/local/lib/libopencv_flann.so /usr/local/lib/libopencv_highgui.so /usr/local/lib/libopencv_imgcodecs.so /usr/local/lib/libopencv_imgproc.so /usr/local/lib/libopencv_ml.so /usr/local/lib/libopencv_objdetect.so /usr/local/lib/libopencv_photo.so /usr/local/lib/libopencv_shape.so /usr/local/lib/libopencv_stitching.so /usr/local/lib/libopencv_superres.so /usr/local/lib/libopencv_videoio.so /usr/local/lib/libopencv_video.so /usr/local/lib/libopencv_videostab.so /usr/local/lib/libopencv_calib3d.so -l3ds -L/home/atom/Qt5.7.0/5.7/gcc_64/lib -lQt5OpenGL -L/usr/lib64 -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -1151,6 +1151,15 @@ moc_mygl.cpp: /home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/QGLWidget \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglshaderprogram.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglversion.h \
 		../pi_AR/marker.h \
+		../pi_AR/MeshModel.h \
+		../pi_AR/files/LoadOBJ.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QVector2D \
+		../pi_AR/files/Load3DS.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QVector \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLFunctions_3_0 \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglfunctions_3_0.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLVersionFunctions \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLShaderProgram \
 		../pi_AR/mygl.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/bin/moc
 	/home/atom/Qt5.7.0/5.7/gcc_64/bin/moc $(DEFINES) -I/home/atom/Qt5.7.0/5.7/gcc_64/mkspecs/linux-g++ -I/opt/git_Atom/atom_AR/Pi/pi_AR -I/usr/local/include -I/home/atom/Qt5.7.0/5.7/gcc_64/include -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtWidgets -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../pi_AR/mygl.h -o moc_mygl.cpp
@@ -1614,7 +1623,16 @@ ui_mainwindow.h: ../pi_AR/mainwindow.ui \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglpixelbuffer.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglshaderprogram.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglversion.h \
-		../pi_AR/marker.h
+		../pi_AR/marker.h \
+		../pi_AR/MeshModel.h \
+		../pi_AR/files/LoadOBJ.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QVector2D \
+		../pi_AR/files/Load3DS.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QVector \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLFunctions_3_0 \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglfunctions_3_0.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLVersionFunctions \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLShaderProgram
 	/home/atom/Qt5.7.0/5.7/gcc_64/bin/uic ../pi_AR/mainwindow.ui -o ui_mainwindow.h
 
 compiler_yacc_decl_make_all:
@@ -2299,6 +2317,15 @@ mygl.o: ../pi_AR/mygl.cpp ../pi_AR/mygl.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglshaderprogram.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglversion.h \
 		../pi_AR/marker.h \
+		../pi_AR/MeshModel.h \
+		../pi_AR/files/LoadOBJ.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QVector2D \
+		../pi_AR/files/Load3DS.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QVector \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLFunctions_3_0 \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglfunctions_3_0.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLVersionFunctions \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLShaderProgram \
 		../pi_AR/decode.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mygl.o ../pi_AR/mygl.cpp
