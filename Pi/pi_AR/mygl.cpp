@@ -12,6 +12,8 @@
 
   0. You just DO WHAT THE FUCK YOU WANT TO.
 */
+#include <unistd.h>
+#include <stdlib.h>
 #include "mygl.h"
 #include "decode.h"
 #include <GL/glu.h>
@@ -137,6 +139,11 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 //	cam.open(0);
 //	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/myGL1.h264");
 	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/1.h264");
+    if(!cam.isOpened()){
+        qDebug() << "open video faild";
+        exit(-1);
+    }
+
 	initWidget();
 	initializeGL();
 
@@ -175,7 +182,17 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 void myGL::initializeGL()
 {
 	qDebug() << "at initializeGL";
-	Load3DS();
+
+    static int flags = 1;
+    if(flags){
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/cube3.3DS");
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dragon1.3DS");
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/kaer1.3DS");
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dapigu.3DS");
+    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dragon2.3DS");
+    flags = 0;
+    }
+//	Load3DS();
 //	 m_chanche = new cMeshModel(QString("chanche.3ds"));
 
 	loadGLTextures();		//加载图片文件
@@ -221,6 +238,7 @@ void myGL::initWidget()
 void myGL::updateWindow(){
 	//get camera data
 	cam >> srcImage;
+
 //	srcImage.release(); srcImage = cv::imread("/opt/git_Atom/atom_AR/img/img_8_12/arok2.jpg");
 //	srcImage.release(); srcImage = cv::imread("/opt/git_Atom/atom_AR/img/img_old/ar5.jpg");
 //	qDebug() << srcImage.channels() <<srcImage.cols << srcImage.rows;
@@ -364,13 +382,11 @@ void myGL::paintGL(){
 
 //        cube();
 //		drawWire();
+        glScalef(0.05,0.05,0.05);
+//        glTranslatef(0.0,0.0,-0.5);
+//        model1->draw(GL_TRIANGLES);
+        model1->draw();
 
-
-		glScalef(0.2,0.2,0.2);
-		glColor4f(0.0f,0.0f,1.0f,1.0f);
-		glVertexPointer(3,GL_FLOAT,0,loadV);
-//		glDrawArrays(GL_TRIANGLES,0,36);
-		glDrawArrays(GL_LINE_LOOP,0,36);
 		//end draw ---------------------------------
 	}
 	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
@@ -496,17 +512,18 @@ void myGL::mousePressEvent(QMouseEvent *mouseEvent)
 
 }
 
+#if 0
 void myGL::Load3DS(/*std::string Name*/){
-	std::string Name = "/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/cube1.3ds";
+    std::string Name = "/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/cube3.3DS";
 	Lib3dsFile * m_model;
 	Lib3dsVector * vertices;
 	int m_TotalFaces = 0;
 	m_model = lib3ds_file_load(Name.c_str());
-qDebug("1??");
+
 	if(!m_model){
 		throw strcat("Unable to load ",Name.c_str());
 	}
-qDebug("2??");
+
 	assert(m_model != NULL);
 
 	Lib3dsMesh * mesh;
@@ -533,7 +550,7 @@ qDebug("2??");
 	}
 
 
-	for(int x = 0;x < 3*m_TotalFaces;x++){
+    for(int x = 0;x < 3*m_TotalFaces;x++){
 		loadV[x*3+0] = vertices[x][0];
 		loadV[x*3+1] = vertices[x][1];
 		loadV[x*3+2] = vertices[x][2];
@@ -543,3 +560,4 @@ qDebug("2??");
 
 
 }
+#endif

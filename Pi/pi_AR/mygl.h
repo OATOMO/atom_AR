@@ -22,8 +22,9 @@
 #include "marker.h"
 #include <lib3ds/file.h>
 #include <lib3ds/mesh.h>
-#include "MeshModel.h"
+//#include "MeshModel.h"
 #include <QMatrix4x4>
+#include "load3ds.h"
 
 using namespace std;
 
@@ -65,14 +66,16 @@ public:
 	cv::Mat dobotTargetPos;
 	cv::Point2f dobotFinalTargetPos;//归一化后位置
 
+
 	void intrinsicMatrix2ProjectionMatrix(cv::Mat& camera_matrix, float width, float height, float near_plane, float far_plane);
 	void extrinsicMatrix2ModelViewMatrix(cv::Mat& rotation, cv::Mat& translation);
 	void imageProcess(cv::Mat);
 	void printMatrix(GLenum type/*,string &message*/);
 	void polygon(int a,int b,int c,int d);
 	void cube();
-	void Load3DS(/*std::string Name*/);
-	float loadV[36*3];
+    //void Load3DS(/*std::string Name*/);
+    //float loadV[3*12*3];
+    load3DS * model1;
 
 protected:
 	void initializeGL();

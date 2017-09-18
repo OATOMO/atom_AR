@@ -30,6 +30,7 @@ SOURCES += main.cpp\
 #   grabthread.cpp
     #grabthread.cpp \
     #moc_grabthread.cpp
+    load3ds.cpp
 
 HEADERS  += mainwindow.h\
     mygl.h \
@@ -41,6 +42,7 @@ HEADERS  += mainwindow.h\
     #grabthread.h
 #   grabthread.h \
 #	shareData.h
+    load3ds.h
 
 INCLUDEPATH += /usr/local/include
 
