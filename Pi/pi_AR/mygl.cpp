@@ -109,8 +109,8 @@ GLfloat colors[][3] = {
 };
 
 void myGL::polygon(int a,int b,int c,int d){
-	//glBegin(GL_POLYGON);
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_POLYGON);
+//	glBegin(GL_LINE_LOOP);
 	glVertex3fv(vertex[a]);
 	glVertex3fv(vertex[b]);
 	glVertex3fv(vertex[c]);
@@ -148,7 +148,7 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 	initializeGL();
 
 //	clk.start(1000);
-	clk.start(40);
+	clk.start(100);
 	QObject::connect(&clk,SIGNAL(timeout()),this,SLOT(updateWindow()));
 
 	cameraMatrix.at<float>(0,0) = 1112.75949f;
@@ -183,26 +183,41 @@ void myGL::initializeGL()
 {
 	qDebug() << "at initializeGL";
 
-    static int flags = 1;
-    if(flags){
-//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/cube3.3DS");
-//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dragon1.3DS");
-//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/kaer1.3DS");
-//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dapigu.3DS");
-    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dragon2.3DS");
-    flags = 0;
-    }
+
 //	Load3DS();
 //	 m_chanche = new cMeshModel(QString("chanche.3ds"));
 
 	loadGLTextures();		//加载图片文件
-	glEnable(GL_TEXTURE_2D);//启用纹理
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClearDepth(1.0);
 //	glEnable(GL_DEPTH_TEST);
 //	glDepthFunc(GL_LEQUAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	//light
+//	GLfloat light_pos[] = {1.0,1.0,1.0,1.0};
+	GLfloat light_pos[] = {1.0f, 1.0f, 1.0f, 0.0f};
+	GLfloat ambient[] = {0.1f, 0.1f, 0.1f, 1.0f};  // 环境强度
+	GLfloat diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};  // 散射强度
+	GLfloat specular[] = {1.0f, 1.0f, 1.0f, 1.0f}; // 镜面强度
+	glLightfv(GL_LIGHT0,GL_POSITION,light_pos);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+static int flags = 1;
+	if(flags){
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/cube3.3DS");
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dragon1.3DS");
+//	model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/kaer1.3DS");
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dapigu.3DS");
+//    model1 = new load3DS("/opt/git_Atom/atom_AR/Pi/pi_AR/Cmodel3ds/dragon2.3DS");
+
+
+	modelObj = new ObjLoader();
+//	modelObj->loadFromFile("/opt/model/kaer/kaer1.obj","/opt/model/kaer/kaer1.mtl");
+	modelObj->loadFromFile("/opt/model/cube/cubedota.obj","/opt/model/cube/cubedota.mtl");
+	flags = 0;
+	}
 }
 
 void myGL::resizeGL(int width, int height)
@@ -223,8 +238,9 @@ void myGL::resizeGL(int width, int height)
 
 
 
-	glEnableClientState(GL_VERTEX_ARRAY);  //启用客户端的某项功能
-	glEnableClientState(GL_NORMAL_ARRAY);
+//	glEnableClientState(GL_VERTEX_ARRAY);  //启用客户端的某项功能
+//	glEnableClientState(GL_NORMAL_ARRAY);
+//	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 //	glMatrixMode(GL_MODELVIEW);
 //	glLoadIdentity();
@@ -255,20 +271,24 @@ void myGL::updateWindow(){
 //	qDebug() <<  "max texture value:" << max;
 	//
 
-	QImage buf, tex;
+//	QImage buf, tex;
 	//将Mat类型转换成QImage
-	buf = QImage((const unsigned char*)srcImage.data, srcImage.cols, srcImage.rows, srcImage.cols * srcImage.channels(), QImage::Format_RGB888);
-	tex = QGLWidget::convertToGLFormat(buf);
+//	buf = QImage((const unsigned char*)srcImage.data, srcImage.cols, srcImage.rows, srcImage.cols * srcImage.channels(), QImage::Format_RGB888);
+//	tex = QGLWidget::convertToGLFormat(buf);
 //	glDrawPixels(tex.width(),tex.height(),GL_BGR_EXT,GL_UNSIGNED_BYTE,tex.bits());
+	cv::Mat backImage;
+	cv::cvtColor(srcImage,backImage,CV_RGB2BGR);
+	glEnable(GL_TEXTURE_2D);//启用纹理
 	glGenTextures(1, &textureBack);//对应图片的纹理定义
 	glBindTexture(GL_TEXTURE_2D, textureBack);//进行纹理绑定
 	//纹理创建
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, srcImage.cols, srcImage.rows, 0,
-		GL_RGB, GL_UNSIGNED_BYTE, srcImage.data);
-//	glTexImage2D(GL_TEXTURE_2D, 0, 3, tex.width(), tex.height(), 0,
-//		GL_RGB, GL_UNSIGNED_BYTE, tex.bits());
+		GL_RGB, GL_UNSIGNED_BYTE, backImage.data);
+//	glTexImage2D(GL_TEXTURE_2D, 0, 4, tex.width(), tex.height(), 0,
+//		GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//	modelObj->m_mtls[0]->texture = textureBack;
 	updateGL();
 }
 
@@ -316,20 +336,21 @@ void myGL::paintGL(){
 
 
 	#if 1//绑定纹理
+		qDebug() << "texture Back number ->" << textureBack;
 
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, textureBack);
-//		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glVertexPointer(2, GL_FLOAT, 0, bgTextureVertices);
-		  glTexCoordPointer(2, GL_FLOAT, 0, bgTextureCoords);
 
-		  glColor4f(1,1,1,1);
-		  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glVertexPointer(2, GL_FLOAT, 0, bgTextureVertices);
+		glTexCoordPointer(2, GL_FLOAT, 0, bgTextureCoords);
+		glColor4f(1,1,1,1);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 //		  glDisableClientState(GL_VERTEX_ARRAY);
-		  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisable(GL_TEXTURE_2D);
+//		  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+//		glDisable(GL_TEXTURE_2D);
 
 	#endif
 	//		glPopMatrix();
@@ -343,8 +364,8 @@ void myGL::paintGL(){
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	GLfloat modelview[16];
-	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+//	GLfloat modelview[16];
+//	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
 
 
 	glPushMatrix();
@@ -380,16 +401,77 @@ void myGL::paintGL(){
 		glVertexPointer(3,GL_FLOAT,0,lineZ);
 		glDrawArrays(GL_LINES,0,2);
 
-//        cube();
+//		cube();
 //		drawWire();
-        glScalef(0.05,0.05,0.05);
 //        glTranslatef(0.0,0.0,-0.5);
 //        model1->draw(GL_TRIANGLES);
-        model1->draw();
+//		model1->draw();
+
+		glColor4f(0.3f,0.3f,0.3f,1.0f);
+
+
+
+
+#if 0 //kaer
+		//obj molde {kaer
+		glScalef(0.02,0.02,0.02);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glRotatef(90.0,1.0,0.0,0.0);
+		modelObj->renderObj();
+		glDisable(GL_DEPTH_TEST);
+		//	obj molde }
+#endif
+
+#if 1 //cube test
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glBindTexture(GL_TEXTURE_2D,modelObj->m_mtls[0]->texture );
+//		glBindTexture(GL_TEXTURE_2D,textureBack );
+		qDebug() << "texture = " <<  modelObj->m_mtls[0]->texture;
+		glBegin(GL_QUADS);
+			glNormal3f(0.0, 0.0, 1.0);
+			glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0, 1.0);
+			glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0, 1.0);
+			glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, 1.0);
+			glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0, 1.0);
+
+			glNormal3f(0.0, 0.0, -1.0);
+			glTexCoord2f(1.0, 0.0); glVertex3f(-1.0, -1.0, -1.0);
+			glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, 1.0, -1.0);
+			glTexCoord2f(0.0, 1.0); glVertex3f(1.0, 1.0, -1.0);
+			glTexCoord2f(0.0, 0.0); glVertex3f(1.0, -1.0, -1.0);
+
+			glNormal3f(0.0, 1.0, 0.0);
+			glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0, -1.0);
+			glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, 1.0, 1.0);
+			glTexCoord2f(1.0, 0.0); glVertex3f(1.0, 1.0, 1.0);
+			glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, -1.0);
+
+			glNormal3f(0.0, -1.0, 0.0);
+			glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);
+			glTexCoord2f(0.0, 1.0); glVertex3f(1.0, -1.0, -1.0);
+			glTexCoord2f(0.0, 0.0); glVertex3f(1.0, -1.0, 1.0);
+			glTexCoord2f(1.0, 0.0); glVertex3f(-1.0, -1.0, 1.0);
+
+			glNormal3f(1.0, 0.0, 0.0);
+			glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0, -1.0);
+			glTexCoord2f(1.0, 1.0); glVertex3f(1.0, 1.0, -1.0);
+			glTexCoord2f(0.0, 1.0); glVertex3f(1.0, 1.0, 1.0);
+			glTexCoord2f(0.0, 0.0); glVertex3f(1.0, -1.0, 1.0);
+
+			glNormal3f(-1.0, 0.0, 0.0);
+			glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0, -1.0);
+			glTexCoord2f(1.0, 0.0); glVertex3f(-1.0, -1.0, 1.0);
+			glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, 1.0, 1.0);
+			glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, 1.0, -1.0);
+		glEnd();//glBegin(GL_QUADS);
+		glDisable(GL_DEPTH_TEST);
+#endif
 
 		//end draw ---------------------------------
 	}
-	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
+//	glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
 
 
 glPopMatrix();
@@ -399,7 +481,7 @@ possible_markers.clear();
 final_markers.clear();
 
 
-//cv::waitKey();//test
+cv::waitKey();//test
 }
 
 void myGL::loadGLTextures(){

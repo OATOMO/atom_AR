@@ -25,6 +25,7 @@
 //#include "MeshModel.h"
 #include <QMatrix4x4>
 #include "load3ds.h"
+#include "loadOBJ/objloader.h"
 
 using namespace std;
 
@@ -76,6 +77,7 @@ public:
     //void Load3DS(/*std::string Name*/);
     //float loadV[3*12*3];
     load3DS * model1;
+	ObjLoader * modelObj;
 
 protected:
 	void initializeGL();

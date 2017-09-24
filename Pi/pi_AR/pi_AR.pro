@@ -30,7 +30,9 @@ SOURCES += main.cpp\
 #   grabthread.cpp
     #grabthread.cpp \
     #moc_grabthread.cpp
-    load3ds.cpp
+    load3ds.cpp \
+    loadOBJ/objloader.cpp \
+    loadOBJ/tgaimage.cpp
 
 HEADERS  += mainwindow.h\
     mygl.h \
@@ -42,7 +44,10 @@ HEADERS  += mainwindow.h\
     #grabthread.h
 #   grabthread.h \
 #	shareData.h
-    load3ds.h
+    load3ds.h \
+    loadOBJ/objloader.h \
+    loadOBJ/reference.h \
+    loadOBJ/tgaimage.h
 
 INCLUDEPATH += /usr/local/include
 
@@ -63,7 +68,13 @@ LIBS += -L/usr/local/lib \
 	/usr/local/lib/libopencv_video.so \
     /usr/local/lib/libopencv_videostab.so \
     /usr/local/lib/libopencv_calib3d.so \
-    -l3ds
+    -l3ds \
+    -lGLU
 
 
 FORMS    += mainwindow.ui
+
+#unix:!macx: LIBS += -L$$PWD/../../../../../home/atom/Qt5.9.1/5.9.1/gcc_64/plugins/imageformats/ -lqtga
+
+#INCLUDEPATH += $$PWD/../../../../../home/atom/Qt5.9.1/5.9.1/gcc_64/plugins/imageformats
+#DEPENDPATH += $$PWD/../../../../../home/atom/Qt5.9.1/5.9.1/gcc_64/plugins/imageformats

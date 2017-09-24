@@ -36,7 +36,7 @@ DISTNAME      = pi_AR1.0.0
 DISTDIR = /opt/git_Atom/atom_AR/Pi/build-pi_AR-Desktop_Qt_5_7_0_GCC_64bit-Debug/.tmp/pi_AR1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/atom/Qt5.7.0/5.7/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/usr/local/lib /usr/local/lib/libopencv_core.so /usr/local/lib/libopencv_features2d.so /usr/local/lib/libopencv_flann.so /usr/local/lib/libopencv_highgui.so /usr/local/lib/libopencv_imgcodecs.so /usr/local/lib/libopencv_imgproc.so /usr/local/lib/libopencv_ml.so /usr/local/lib/libopencv_objdetect.so /usr/local/lib/libopencv_photo.so /usr/local/lib/libopencv_shape.so /usr/local/lib/libopencv_stitching.so /usr/local/lib/libopencv_superres.so /usr/local/lib/libopencv_videoio.so /usr/local/lib/libopencv_video.so /usr/local/lib/libopencv_videostab.so /usr/local/lib/libopencv_calib3d.so -l3ds -L/home/atom/Qt5.7.0/5.7/gcc_64/lib -lQt5OpenGL -L/usr/lib64 -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/local/lib /usr/local/lib/libopencv_core.so /usr/local/lib/libopencv_features2d.so /usr/local/lib/libopencv_flann.so /usr/local/lib/libopencv_highgui.so /usr/local/lib/libopencv_imgcodecs.so /usr/local/lib/libopencv_imgproc.so /usr/local/lib/libopencv_ml.so /usr/local/lib/libopencv_objdetect.so /usr/local/lib/libopencv_photo.so /usr/local/lib/libopencv_shape.so /usr/local/lib/libopencv_stitching.so /usr/local/lib/libopencv_superres.so /usr/local/lib/libopencv_videoio.so /usr/local/lib/libopencv_video.so /usr/local/lib/libopencv_videostab.so /usr/local/lib/libopencv_calib3d.so -l3ds -lGLU -L/home/atom/Qt5.7.0/5.7/gcc_64/lib -lQt5OpenGL -L/usr/lib64 -lQt5Widgets -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -52,13 +52,17 @@ SOURCES       = ../pi_AR/main.cpp \
 		../pi_AR/mainwindow.cpp \
 		../pi_AR/mygl.cpp \
 		../pi_AR/marker.cpp \
-		../pi_AR/decode.cpp moc_mainwindow.cpp \
+		../pi_AR/decode.cpp \
+		../pi_AR/load3ds.cpp \
+		../pi_AR/loadOBJ/objloader.cpp moc_mainwindow.cpp \
 		moc_mygl.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		mygl.o \
 		marker.o \
 		decode.o \
+		load3ds.o \
+		objloader.o \
 		moc_mainwindow.o \
 		moc_mygl.o
 DIST          = /home/atom/Qt5.7.0/5.7/gcc_64/mkspecs/features/spec_pre.prf \
@@ -217,11 +221,16 @@ DIST          = /home/atom/Qt5.7.0/5.7/gcc_64/mkspecs/features/spec_pre.prf \
 		../pi_AR/pi_AR.pro ../pi_AR/mainwindow.h \
 		../pi_AR/mygl.h \
 		../pi_AR/marker.h \
-		../pi_AR/decode.h ../pi_AR/main.cpp \
+		../pi_AR/decode.h \
+		../pi_AR/load3ds.h \
+		../pi_AR/loadOBJ/objloader.h \
+		../pi_AR/loadOBJ/reference.h ../pi_AR/main.cpp \
 		../pi_AR/mainwindow.cpp \
 		../pi_AR/mygl.cpp \
 		../pi_AR/marker.cpp \
-		../pi_AR/decode.cpp
+		../pi_AR/decode.cpp \
+		../pi_AR/load3ds.cpp \
+		../pi_AR/loadOBJ/objloader.cpp
 QMAKE_TARGET  = pi_AR
 DESTDIR       = 
 TARGET        = pi_AR
@@ -564,8 +573,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../pi_AR/mainwindow.h ../pi_AR/mygl.h ../pi_AR/marker.h ../pi_AR/decode.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../pi_AR/main.cpp ../pi_AR/mainwindow.cpp ../pi_AR/mygl.cpp ../pi_AR/marker.cpp ../pi_AR/decode.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../pi_AR/mainwindow.h ../pi_AR/mygl.h ../pi_AR/marker.h ../pi_AR/decode.h ../pi_AR/load3ds.h ../pi_AR/loadOBJ/objloader.h ../pi_AR/loadOBJ/reference.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../pi_AR/main.cpp ../pi_AR/mainwindow.cpp ../pi_AR/mygl.cpp ../pi_AR/marker.cpp ../pi_AR/decode.cpp ../pi_AR/load3ds.cpp ../pi_AR/loadOBJ/objloader.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../pi_AR/mainwindow.ui $(DISTDIR)/
 
 
@@ -1151,15 +1160,13 @@ moc_mygl.cpp: /home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/QGLWidget \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglshaderprogram.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglversion.h \
 		../pi_AR/marker.h \
-		../pi_AR/MeshModel.h \
-		../pi_AR/files/LoadOBJ.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QVector2D \
-		../pi_AR/files/Load3DS.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QVector \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLFunctions_3_0 \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglfunctions_3_0.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLVersionFunctions \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLShaderProgram \
+		../pi_AR/load3ds.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QDebug \
+		../pi_AR/loadOBJ/objloader.h \
+		../pi_AR/loadOBJ/reference.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFileInfo \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFile \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QTextStream \
 		../pi_AR/mygl.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/bin/moc
 	/home/atom/Qt5.7.0/5.7/gcc_64/bin/moc $(DEFINES) -I/home/atom/Qt5.7.0/5.7/gcc_64/mkspecs/linux-g++ -I/opt/git_Atom/atom_AR/Pi/pi_AR -I/usr/local/include -I/home/atom/Qt5.7.0/5.7/gcc_64/include -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtWidgets -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui -I/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../pi_AR/mygl.h -o moc_mygl.cpp
@@ -1624,15 +1631,13 @@ ui_mainwindow.h: ../pi_AR/mainwindow.ui \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglshaderprogram.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglversion.h \
 		../pi_AR/marker.h \
-		../pi_AR/MeshModel.h \
-		../pi_AR/files/LoadOBJ.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QVector2D \
-		../pi_AR/files/Load3DS.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QVector \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLFunctions_3_0 \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglfunctions_3_0.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLVersionFunctions \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLShaderProgram
+		../pi_AR/load3ds.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QDebug \
+		../pi_AR/loadOBJ/objloader.h \
+		../pi_AR/loadOBJ/reference.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFileInfo \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFile \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QTextStream
 	/home/atom/Qt5.7.0/5.7/gcc_64/bin/uic ../pi_AR/mainwindow.ui -o ui_mainwindow.h
 
 compiler_yacc_decl_make_all:
@@ -2317,17 +2322,14 @@ mygl.o: ../pi_AR/mygl.cpp ../pi_AR/mygl.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglshaderprogram.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglversion.h \
 		../pi_AR/marker.h \
-		../pi_AR/MeshModel.h \
-		../pi_AR/files/LoadOBJ.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QVector2D \
-		../pi_AR/files/Load3DS.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QVector \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLFunctions_3_0 \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglfunctions_3_0.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLVersionFunctions \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLShaderProgram \
-		../pi_AR/decode.h \
-		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QDebug
+		../pi_AR/load3ds.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QDebug \
+		../pi_AR/loadOBJ/objloader.h \
+		../pi_AR/loadOBJ/reference.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFileInfo \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFile \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QTextStream \
+		../pi_AR/decode.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mygl.o ../pi_AR/mygl.cpp
 
 marker.o: ../pi_AR/marker.cpp ../pi_AR/marker.h
@@ -2398,6 +2400,246 @@ decode.o: ../pi_AR/decode.cpp ../pi_AR/decode.h \
 		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedpointer_impl.h \
 		../pi_AR/marker.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o decode.o ../pi_AR/decode.cpp
+
+load3ds.o: ../pi_AR/load3ds.cpp ../pi_AR/load3ds.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QDebug \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qdebug.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qalgorithms.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qglobal.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qconfig.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qfeatures.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qtypetraits.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qisenum.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsysinfo.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qlogging.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qflags.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_msvc.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmutex.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qnumeric.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qversiontagging.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qhash.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qchar.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qiterator.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qlist.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qrefcount.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qarraydata.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qpair.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qbytearray.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qnamespace.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstring.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstringlist.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qregexp.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qtextstream.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qiodevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobject.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcoreevent.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmetatype.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobject_impl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qlocale.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qvariant.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qshareddata.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qvector.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qpoint.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qset.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/QGLWidget \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qgl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopengl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qt_windows.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopengles2ext.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglext.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtWidgets/qwidget.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmargins.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qrect.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsize.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpalette.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qcolor.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qrgb.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qrgba64.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qbrush.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qmatrix.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpolygon.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qregion.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qdatastream.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qline.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qtransform.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpainterpath.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qimage.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpixelformat.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpixmap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qfont.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qfontinfo.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qcursor.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qkeysequence.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qevent.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qurl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qurlquery.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qfile.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qfiledevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qvector2d.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qtouchdevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpaintengine.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpainter.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qtextoption.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpen.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QSurfaceFormat \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QMatrix4x4 \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qmatrix4x4.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qvector3d.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qvector4d.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qquaternion.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qgenericmatrix.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o load3ds.o ../pi_AR/load3ds.cpp
+
+objloader.o: ../pi_AR/loadOBJ/objloader.cpp ../pi_AR/loadOBJ/objloader.h \
+		../pi_AR/loadOBJ/reference.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/QGLWidget \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qgl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopengl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qglobal.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qconfig.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qfeatures.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qtypetraits.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qisenum.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsysinfo.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qlogging.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qflags.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_msvc.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmutex.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qnumeric.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qversiontagging.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qt_windows.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopengles2ext.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglext.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtWidgets/qwidget.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qnamespace.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobject.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstring.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qchar.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qbytearray.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qrefcount.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qarraydata.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qlist.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qalgorithms.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qiterator.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qpair.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstringlist.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qregexp.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcoreevent.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmetatype.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qobject_impl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmargins.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qrect.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsize.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qpoint.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpalette.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qcolor.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qrgb.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qrgba64.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qbrush.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qvector.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qmatrix.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpolygon.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qregion.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qdatastream.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qiodevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qline.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qtransform.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpainterpath.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qimage.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpixelformat.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpixmap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qshareddata.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qhash.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qfont.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qfontinfo.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qcursor.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qkeysequence.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qevent.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qvariant.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qmap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qdebug.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qtextstream.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qlocale.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qset.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qurl.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qurlquery.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qfile.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qfiledevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qvector2d.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qtouchdevice.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpaintengine.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpainter.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qtextoption.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qpen.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QSurfaceFormat \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QDebug \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFileInfo \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/qfileinfo.h \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QFile \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtCore/QTextStream \
+		/home/atom/Qt5.7.0/5.7/gcc_64/include/QtGui/QImage
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o objloader.o ../pi_AR/loadOBJ/objloader.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
