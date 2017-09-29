@@ -52,6 +52,7 @@ public:
     QVector<Point3> normals;
 
     QVector<Material*> m_mtls;
+    QVector<QString> m_textureName;
 
     void loadObjFile(QString filename);
     void loadMtlFile(QString filename);

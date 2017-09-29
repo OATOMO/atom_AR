@@ -138,8 +138,9 @@ void myGL::cube(){
 myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 //	cam.open(0);
 //	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/myGL1.h264");
-	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/1.h264");
-    if(!cam.isOpened()){
+//	cam.open("/opt/git_Atom/atom_AR/Pi/pi_AR/1.h264");
+	cam.open("/opt/_file/raspi/7.h264");
+	if(!cam.isOpened()){
         qDebug() << "open video faild";
         exit(-1);
     }
@@ -148,7 +149,7 @@ myGL::myGL(QWidget * parent):QGLWidget(parent),number(0){
 	initializeGL();
 
 //	clk.start(1000);
-	clk.start(100);
+	clk.start(40);
 	QObject::connect(&clk,SIGNAL(timeout()),this,SLOT(updateWindow()));
 
 	cameraMatrix.at<float>(0,0) = 1112.75949f;
@@ -214,9 +215,9 @@ static int flags = 1;
 
 
 	modelObj = new ObjLoader();
-//	modelObj->loadFromFile("/opt/model/kaer/kaer1.obj","/opt/model/kaer/kaer1.mtl");
-	modelObj->loadFromFile("/opt/model/cube/cubedota.obj","/opt/model/cube/cubedota.mtl");
-	flags = 0;
+	modelObj->loadFromFile("/opt/model/kaer/kaer1.obj","/opt/model/kaer/kaer1.mtl");
+//	modelObj->loadFromFile("/opt/model/cube/cubedota.obj","/opt/model/cube/cubedota.mtl");
+    flags = 0;
 	}
 }
 
@@ -282,8 +283,8 @@ void myGL::updateWindow(){
 	glGenTextures(1, &textureBack);//对应图片的纹理定义
 	glBindTexture(GL_TEXTURE_2D, textureBack);//进行纹理绑定
 	//纹理创建
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, srcImage.cols, srcImage.rows, 0,
-		GL_RGB, GL_UNSIGNED_BYTE, backImage.data);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, srcImage.cols, srcImage.rows, 0,
+        GL_RGB, GL_UNSIGNED_BYTE, backImage.data);
 //	glTexImage2D(GL_TEXTURE_2D, 0, 4, tex.width(), tex.height(), 0,
 //		GL_RGBA, GL_UNSIGNED_BYTE, tex.bits());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -307,7 +308,12 @@ void myGL::imageProcess(cv::Mat srcImage){
 void myGL::paintGL(){
 	qDebug() << "paintGL !!!";
 
-	cv::imshow("2",srcImage);
+	static int HelpTextFlag = 1;
+	if(HelpTextFlag){
+		Helptexture();
+		HelpTextFlag = 0;
+	}
+//    cv::imshow("2",srcImage);
 //	cv::waitKey();
 
 //		glPushMatrix();
@@ -388,18 +394,18 @@ void myGL::paintGL(){
 		glScalef(scale,scale,scale);
 		glRotatef(90.0*final_markers[i].nRotations,0,0,1);
 
-		glColor4f(1.0f,0.0f,0.0f,1.0f);
-		glVertexPointer(3,GL_FLOAT,0,lineX);
-		glDrawArrays(GL_LINES,0,2);
+//		glColor4f(1.0f,0.0f,0.0f,1.0f);
+//		glVertexPointer(3,GL_FLOAT,0,lineX);
+//		glDrawArrays(GL_LINES,0,2);
 
-		glColor4f(0.0f,1.0f,0.0f,1.0f);
-		glVertexPointer(3,GL_FLOAT,0,lineY);
-		glDrawArrays(GL_LINES,0,2);
+//		glColor4f(0.0f,1.0f,0.0f,1.0f);
+//		glVertexPointer(3,GL_FLOAT,0,lineY);
+//		glDrawArrays(GL_LINES,0,2);
 
 
-		glColor4f(0.0f,0.0f,1.0f,1.0f);
-		glVertexPointer(3,GL_FLOAT,0,lineZ);
-		glDrawArrays(GL_LINES,0,2);
+//		glColor4f(0.0f,0.0f,1.0f,1.0f);
+//		glVertexPointer(3,GL_FLOAT,0,lineZ);
+//		glDrawArrays(GL_LINES,0,2);
 
 //		cube();
 //		drawWire();
@@ -412,7 +418,7 @@ void myGL::paintGL(){
 
 
 
-#if 0 //kaer
+#if 1 //kaer
 		//obj molde {kaer
 		glScalef(0.02,0.02,0.02);
 		glEnable(GL_DEPTH_TEST);
@@ -423,7 +429,9 @@ void myGL::paintGL(){
 		//	obj molde }
 #endif
 
-#if 1 //cube test
+#if 0 //cube test
+
+
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glBindTexture(GL_TEXTURE_2D,modelObj->m_mtls[0]->texture );
@@ -481,7 +489,7 @@ possible_markers.clear();
 final_markers.clear();
 
 
-cv::waitKey();//test
+//cv::waitKey();//test
 }
 
 void myGL::loadGLTextures(){
@@ -643,3 +651,15 @@ void myGL::Load3DS(/*std::string Name*/){
 
 }
 #endif
+
+void myGL::Helptexture(){
+    qDebug() << modelObj->m_textureName;
+    int textCount = modelObj->m_mtls.size();
+    for (int i = 0 ;i < textCount;i++){
+
+        GLuint tempText;
+        Texture::loadTexture(modelObj->m_textureName[i],&tempText);
+        modelObj->m_mtls[i]->texture = tempText;
+        qDebug() << "m_mtls[i]->texture" << modelObj->m_mtls[i]->texture;
+    }
+}

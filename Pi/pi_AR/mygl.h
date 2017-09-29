@@ -26,6 +26,7 @@
 #include <QMatrix4x4>
 #include "load3ds.h"
 #include "loadOBJ/objloader.h"
+#include "loadOBJ/reference.h"
 
 using namespace std;
 
@@ -74,6 +75,7 @@ public:
 	void printMatrix(GLenum type/*,string &message*/);
 	void polygon(int a,int b,int c,int d);
 	void cube();
+    void Helptexture();
     //void Load3DS(/*std::string Name*/);
     //float loadV[3*12*3];
     load3DS * model1;

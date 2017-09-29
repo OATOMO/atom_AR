@@ -33,13 +33,22 @@ class Texture : public QGLWidget
 {
 public:
 	static void loadTexture(QString filepath, GLuint *texture){
-		QImage tex,buf;
+		QImage tex;//buf;
 		glEnable(GL_TEXTURE_2D);
-		if(!buf.load("/home/atom/Desktop/cube.bmp"))
+#if 0
+		if(!buf.load(filepath.toStdString().c_str()))
 		{
 			printf("Error: failed to load image!");
 			exit(1);
 		}
+#endif
+		TGAImage  tga ;//= new TGAImage();
+		if(!tga.read_tga_file(filepath.toStdString().c_str())){
+			printf("Error: failed to load image!");
+			exit(1);
+		}
+		QImage buf(tga.buffer(),tga.get_width(),tga.get_height(),QImage::Format_RGB888);
+
 		tex = QGLWidget::convertToGLFormat(buf);
 		glGenTextures(1, texture);
 		glBindTexture(GL_TEXTURE_2D, *texture);

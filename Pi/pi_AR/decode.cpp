@@ -237,7 +237,7 @@ void Decode::markerRecognize(std::vector<Marker>& possible_markers, std::vector<
 	
 	//possible_markers.at(i).m_id = i;//给通过的MARKER码一个ID
 
-		cv::imshow("threshold",marker_image);//test
+//		cv::imshow("threshold",marker_image);//test
 
 		//通过之后把点集推入final
 	//    std::rotate(final_markers[i].m_corners.begin(), final_markers[i].m_corners.begin() + rotation_idx, final_markers[i].m_corners.end());

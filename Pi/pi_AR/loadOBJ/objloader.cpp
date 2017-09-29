@@ -81,7 +81,7 @@ void ObjLoader::loadMtlFile(QString filename)
                 continue;
             m_mtls[index]->hasTexture = true;
 			Texture::loadTexture(imgPath,&m_mtls[index]->texture);
-
+            m_textureName.push_back(imgPath);
         }
     }
 	int x;
